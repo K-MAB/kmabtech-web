@@ -9,6 +9,9 @@ import Footer from "@/components/Footer";
 import { AnimateInView } from "@/components/AnimateInView";
 import { ElementType } from "react";
 import Cube from "@/components/cube";
+import FeatureHighlight from "@/components/FeatureHighlight";
+import ScrollingText from "@/components/CmdTerminal";
+
 
 export default function HomePage() {
   return (
@@ -22,7 +25,6 @@ export default function HomePage() {
       {/* ============ HERO SECTION ============ */}
       <section className="min-h-[calc(100vh-64px)] px-6 sm:px-8 lg:px-12 pt-28 sm:pt-20 lg:pt-32">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-
           {/* SOL TARAF */}
           <motion.div
             initial={{ opacity: 0, x: -40 }}
@@ -35,7 +37,8 @@ export default function HomePage() {
             </h1>
 
             <p className="text-base sm:text-lg md:text-xl text-gray-300 mb-10 max-w-lg mx-auto lg:mx-0">
-              ASP.NET Core ve Next.js gücüyle kurumsal, hızlı ve güvenilir web siteleri geliştiriyoruz.
+              ASP.NET Core ve Next.js gücüyle kurumsal, hızlı ve güvenilir web
+              siteleri geliştiriyoruz.
             </p>
 
             <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
@@ -57,7 +60,7 @@ export default function HomePage() {
             </div>
           </motion.div>
 
-          {/* ============ SAĞ TARAF – 3D KÜP ============ */}
+          {/* SAĞ TARAF – 3D KÜP */}
           <motion.div
             initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
@@ -66,9 +69,16 @@ export default function HomePage() {
           >
             <Cube />
           </motion.div>
-
         </div>
+      <ScrollingText />
+
+
       </section>
+
+      {/* ========= HERO ALTINA FEATURE ROW ========= */}
+
+      {/* ========= ÇİZGİ (SECTION DIVIDER) ========= */}
+      <SectionDivider />
 
       {/* ============ HİZMETLER ============ */}
       <div className="pt-10 pb-20">
@@ -76,6 +86,9 @@ export default function HomePage() {
           <ServicesTabs />
         </AnimateInView>
       </div>
+
+      {/* ========= ÇİZGİ ========= */}
+      <SectionDivider />
 
       {/* ============ İŞ AKIŞI ============ */}
       <div className="py-20 border-t border-white/10 bg-white/[0.02] backdrop-blur-sm">
@@ -85,13 +98,27 @@ export default function HomePage() {
           </h2>
 
           <div className="grid md:grid-cols-3 gap-8">
-            <InfoCard title="Planlama ve Analiz" description="Projenizi detaylı şekilde analiz ederiz." icon={Shield} />
-            <InfoCard title="Geliştirme ve Entegrasyon" description="Modern teknolojilerle gelişmiş arayüzler oluştururuz." icon={Code} />
-            <InfoCard title="Dağıtım ve Destek" description="Canlıya alma, optimizasyon ve güvenlik desteği sağlarız." icon={Server} />
+            <InfoCard
+              title="Planlama ve Analiz"
+              description="Projenizi detaylı şekilde analiz ederiz."
+              icon={Shield}
+            />
+            <InfoCard
+              title="Geliştirme ve Entegrasyon"
+              description="Modern teknolojilerle gelişmiş arayüzler oluştururuz."
+              icon={Code}
+            />
+            <InfoCard
+              title="Dağıtım ve Destek"
+              description="Canlıya alma, optimizasyon ve güvenlik desteği sağlarız."
+              icon={Server}
+            />
           </div>
-
         </AnimateInView>
       </div>
+
+      {/* ========= ÇİZGİ ========= */}
+      <SectionDivider />
 
       {/* ============ REFERANSLAR ============ */}
       <div className="pt-10 pb-20">
@@ -104,8 +131,23 @@ export default function HomePage() {
       <div className="bg-black/50 backdrop-blur-md border-t border-white/10">
         <Footer />
       </div>
-
     </div>
+  );
+}
+
+/* ========== SECTION DIVIDER (ÇİZGİ) ========== */
+function SectionDivider() {
+  return (
+    <motion.div
+      initial={{ width: "0%" }}
+      whileInView={{ width: "100%" }}
+      viewport={{ once: true }}
+      transition={{ duration: 1.2, ease: "easeOut" }}
+      className="
+        h-1 my-16 mx-auto 
+        bg-gradient-to-r from-purple-600 via-indigo-500 to-blue-600
+        rounded-full"
+    />
   );
 }
 
