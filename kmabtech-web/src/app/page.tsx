@@ -19,7 +19,6 @@ export default function HomePage() {
             }}
         >
 
-
 {/* ============ HERO SECTION ============ */}
 <section className="min-h-[calc(100vh-64px)] px-6 sm:px-8 lg:px-12 pt-28 sm:pt-20 lg:pt-32">
     <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
@@ -58,14 +57,14 @@ export default function HomePage() {
             </div>
         </motion.div>
 
-        {/* SAĞ TARAF – RESPONSIVE 3D CUBE */}
+        {/* SAĞ TARAF – 3D KÜP */}
         <motion.div
             initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1.2 }}
             className="flex justify-center lg:justify-end mt-10 lg:mt-0"
         >
-            <div className="cube-container scale-75 sm:scale-90 md:scale-100 lg:scale-110">
+            <div className="cube-wrapper">
                 <div className="cube">
                     <div className="face front">DEV</div>
                     <div className="face back">API</div>
@@ -81,14 +80,12 @@ export default function HomePage() {
 </section>
 
 
-
 {/* ============ HİZMETLER ============ */}
 <div className="pt-10 pb-20">
     <AnimateInView delay={0.2} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <ServicesTabs />
     </AnimateInView>
 </div>
-
 
 
 {/* ============ İŞ AKIŞI ============ */}
@@ -108,7 +105,6 @@ export default function HomePage() {
 </div>
 
 
-
 {/* ============ REFERANSLAR ============ */}
 <div className="pt-10 pb-20">
     <AnimateInView delay={0.2}>
@@ -117,20 +113,18 @@ export default function HomePage() {
 </div>
 
 
-
 {/* ============ FOOTER ============ */}
 <div className="bg-black/50 backdrop-blur-md border-t border-white/10">
     <Footer />
 </div>
 
 
-
-{/* 3D CUBE STYLES */}
+{/* ============ 3D CUBE STYLES ============ */}
 <style jsx>{`
-    .cube-container {
-        width: 220px;
-        height: 220px;
-        perspective: 900px;
+    .cube-wrapper {
+        width: 260px;
+        height: 260px;
+        perspective: 1100px;
     }
 
     .cube {
@@ -143,26 +137,26 @@ export default function HomePage() {
 
     .face {
         position: absolute;
-        width: 220px;
-        height: 220px;
+        width: 260px;
+        height: 260px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 28px;
+        font-size: 32px;
         font-weight: bold;
         color: #00eaff;
         border: 2px solid rgba(0,255,255,0.3);
-        background: rgba(0, 0, 50, 0.3);
+        background: rgba(0, 0, 50, 0.22);
         backdrop-filter: blur(8px);
         text-shadow: 0 0 12px rgba(0,255,255,0.9);
     }
 
-    .front  { transform: translateZ(110px); }
-    .back   { transform: rotateY(180deg) translateZ(110px); }
-    .right  { transform: rotateY(90deg) translateZ(110px); }
-    .left   { transform: rotateY(-90deg) translateZ(110px); }
-    .top    { transform: rotateX(90deg) translateZ(110px); }
-    .bottom { transform: rotateX(-90deg) translateZ(110px); }
+    .front  { transform: translateZ(130px); }
+    .back   { transform: rotateY(180deg) translateZ(130px); }
+    .right  { transform: rotateY(90deg) translateZ(130px); }
+    .left   { transform: rotateY(-90deg) translateZ(130px); }
+    .top    { transform: rotateX(90deg) translateZ(130px); }
+    .bottom { transform: rotateX(-90deg) translateZ(130px); }
 
     @keyframes rotateCube {
         from { transform: rotateX(0deg) rotateY(0deg); }
