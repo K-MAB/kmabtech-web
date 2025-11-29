@@ -1,0 +1,96 @@
+/* ================================================
+   🌈 KMABTech — Global Theme Color Variables
+   Tüm projede kullanılan renkler burada toplanır.
+   ================================================ */
+
+
+/* ================================
+   🌞 LIGHT THEME
+================================ */
+:root {
+  /* ---- Genel Arka Planlar ---- */
+  --color-bg: #f4f5f7;            /* Light page background */
+  --color-bg-secondary: #e7e9ec;  /* VSCode top bar, secondary boxes */
+
+  /* ---- Yazılar ---- */
+  --color-text: #1a1a1a;
+
+  /* ---- Border ---- */
+  --color-border: #d0d0d0;
+
+  /* ---- Editor İç Renkleri ---- */
+  --editor-bg: #f4f5f7;         
+  --editor-border: #cfcfcf;
+
+  /* ---- Gradient (Section Divider, Glow, Frames) ---- */
+  --gradient-start: #a855f7;  /* purple-500 */
+  --gradient-mid:   #6366f1;  /* indigo-500 */
+  --gradient-end:   #3b82f6;  /* blue-500 */
+
+  /* ---- Neon & Cube Renkleri ---- */
+  --cube-text: #00eaff;                    /* Cube yazı rengi */
+  --cube-border: rgba(0, 255, 255, 0.35);  /* Cube border */
+  --cube-bg: rgba(0, 20, 40, 0.3);         /* Cube yüzeyi */
+  --cube-shadow: rgba(0, 200, 255, 0.8);   /* Cube dış glow */
+  --cube-shadow-inset: rgba(0, 200, 255, 0.4); /* Cube iç glow */
+
+  /* ---- Hero Arka Plan Radial ---- */
+  --hero-radial-1: rgba(2, 0, 36, 1);
+  --hero-radial-2: rgba(0, 0, 43, 1);
+  --hero-radial-3: rgba(0, 14, 18, 1);
+
+  /* ---- Carousel Arkaplan ---- */
+  --carousel-bg-1: #070b38;
+  --carousel-bg-2: #000a1f;
+  --carousel-bg-3: #001226;
+}
+
+/* ================================
+   🌙 DARK THEME
+================================ */
+[data-theme="dark"] {
+  /* ---- Genel Arka Planlar ---- */
+  --color-bg: #0a0a0a;
+  --color-bg-secondary: #2d2d2d;
+
+  /* ---- Yazılar ---- */
+  --color-text: #ededed;
+
+  /* ---- Border ---- */
+  --color-border: #3a3a3a;
+
+  /* ---- Editor İç Renkleri ---- */
+  --editor-bg: #1e1e1e;
+  --editor-border: #3a3a3a;
+
+  /* ---- Gradient (same tones but darker output) ---- */
+  --gradient-start: #7c3aed; /* purple-600 */
+  --gradient-mid:   #4f46e5; /* indigo-600 */
+  --gradient-end:   #2563eb; /* blue-600 */
+
+  /* ---- Cube Renkleri ---- */
+  --cube-text: #00eaff;
+  --cube-border: rgba(0, 255, 255, 0.35);
+  --cube-bg: rgba(0, 20, 40, 0.3);
+  --cube-shadow: rgba(0, 200, 255, 0.8);
+  --cube-shadow-inset: rgba(0, 200, 255, 0.4);
+
+  /* ---- Carousel Arkaplan (Dark mode için uyumlu) ---- */
+  --carousel-bg-1: #060826;
+  --carousel-bg-2: #00061a;
+  --carousel-bg-3: #000d1f;
+}
+
+
+/* ================================================
+   🔥 ANIMATIONS
+================================ */
+@keyframes glowOpacity {
+  0% { opacity: 0.15; }
+  50% { opacity: 0.35; }
+  100% { opacity: 0.15; }
+}
+
+.animate-glowOpacity {
+  animation: glowOpacity 6s ease-in-out infinite;
+}

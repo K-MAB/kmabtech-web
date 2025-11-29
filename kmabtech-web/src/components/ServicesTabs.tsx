@@ -8,6 +8,7 @@ import { Code, GitBranch, Zap, Shield } from "lucide-react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import VSCodeEditor from "@/components/VSCodeEditor";
+import { useTheme } from "@/components/Theme/ThemeProvider";
 
 // =============================
 //  Kod içerikleri
@@ -156,6 +157,7 @@ app.whenReady().then(createWindow);
 //  Ana Component
 // =============================
 export default function ServicesTabs() {
+  const { theme } = useTheme();
   const { data: services } = useApi<Service[]>("/Services");
   const [activeService, setActiveService] = useState<Service | null>(null);
 
@@ -169,22 +171,28 @@ export default function ServicesTabs() {
 
   return (
     <section className="py-20">
-      <h2 className="text-5xl font-bold text-center mb-16 text-gray-200">
+      <h2 className="text-5xl font-bold text-center mb-16 text-foreground">
         Geliştirme Alanlarımız
       </h2>
 
       {/* ⭐ ANA CONTAINER */}
       <div
         className="
-        max-w-[1600px] mx-auto rounded-2xl p-[3px]
-        bg-gradient-to-r from-purple-600 via-indigo-500 to-blue-600
-        shadow-[0_0_60px_25px_rgba(88,28,135,0.45)]
+          max-w-[1600px] mx-auto rounded-2xl p-[3px]
+          bg-gradient-to-r from-purple-600 via-indigo-500 to-blue-600
+          shadow-[0_0_60px_25px_rgba(88,28,135,0.45)]
         "
       >
-        <div className="rounded-2xl bg-gray-900 border border-gray-700 p-10">
-
+        <div
+          className={`
+            rounded-2xl p-10 border
+            ${theme === "dark"
+              ? "bg-[#0d0f16] border-gray-700"
+              : "bg-white border-gray-300 shadow-xl"}
+          `}
+        >
           {/* ⭐ TABS */}
-          <div className="flex space-x-3 overflow-x-auto mb-10">
+          <div className="flex space-x-3 overflow-x-auto mb-10 pb-2">
             {services.map((service) => (
               <motion.button
                 key={service.id}
@@ -194,14 +202,13 @@ export default function ServicesTabs() {
                   flex items-center space-x-2 px-6 py-3 rounded-lg text-base transition-all
                   ${
                     activeService?.id === service.id
-                      ? "bg-blue-600 text-white shadow-xl"
-                      : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                      ? "bg-blue-600 text-white shadow-lg shadow-blue-500/40"
+                      : theme === "dark"
+                      ? "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                   }
                 `}
-                transition={{
-                  ease: [0.22, 1, 0.36, 1],
-                  duration: 0.6,
-                }}
+                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
               >
                 {service.titleTr.includes("Web") && <Code size={18} />}
                 {service.titleTr.includes("Yapay") && <Zap size={18} />}
@@ -223,7 +230,7 @@ export default function ServicesTabs() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -30 }}
                   transition={{
-                    duration: 3.0,
+                    duration: 0.8,
                     ease: [0.22, 1, 0.36, 1],
                   }}
                   className="mb-12"
@@ -234,23 +241,23 @@ export default function ServicesTabs() {
                   />
                 </motion.div>
 
-                {/* ⭐ YAZI ALTA */}
+                {/* ⭐ ALT YAZI */}
                 <motion.div
                   key={activeService.titleTr + "-content"}
                   initial={{ opacity: 0, y: 25 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
                   transition={{
-                    duration: 4,
+                    duration: 1.0,
                     ease: [0.22, 1, 0.36, 1],
                   }}
                   className="text-center"
                 >
-                  <h3 className="text-4xl font-bold mb-3">
+                  <h3 className="text-4xl font-bold mb-3 text-foreground">
                     {activeService.titleTr}
                   </h3>
 
-                  <p className="text-gray-400 text-lg leading-relaxed mb-8 max-w-3xl mx-auto">
+                  <p className="text-muted-foreground text-lg leading-relaxed mb-8 max-w-3xl mx-auto">
                     {activeService.descriptionTr}
                   </p>
 
@@ -264,7 +271,6 @@ export default function ServicesTabs() {
               </>
             )}
           </AnimatePresence>
-
         </div>
       </div>
     </section>

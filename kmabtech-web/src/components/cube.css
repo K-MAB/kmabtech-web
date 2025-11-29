@@ -1,20 +1,25 @@
+/* ==== WRAPPER ==== */
 .cube-wrapper {
     width: 280px;
     height: 280px;
-    perspective: 1200px;
+    perspective: 1400px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
+/* ==== CUBE ==== */
 .cube {
     width: 100%;
     height: 100%;
     position: relative;
     transform-style: preserve-3d;
-    animation: rotateCube 8s infinite linear;
+
+    /* Daha smooth animasyon */
+    animation: rotateCube 10s infinite cubic-bezier(0.4, 0.1, 0.2, 1);
 }
 
+/* ==== FACE (genel stil) ==== */
 .face {
     position: absolute;
     width: 280px;
@@ -25,20 +30,43 @@
 
     font-size: 34px;
     font-weight: 900;
-    color: #00eaff;
+    letter-spacing: 2px;
 
-    border: 2px solid rgba(0, 255, 255, 0.35);
-    background: rgba(0, 20, 40, 0.3);
-    backdrop-filter: blur(8px);
+    border-radius: 12px;
+
+    /* Ana neon theme */
+    color: var(--cube-text, #00eaff);
+    background: var(--cube-bg, rgba(0, 20, 40, 0.28));
+    border: 2px solid var(--cube-border, rgba(0, 255, 255, 0.35));
+
+    backdrop-filter: blur(10px);
 
     box-shadow:
-        0 0 20px rgba(0, 200, 255, 0.8),
-        inset 0 0 25px rgba(0, 200, 255, 0.4);
+        0 0 25px var(--cube-glow, rgba(0, 200, 255, 0.45)),
+        inset 0 0 30px var(--cube-glow, rgba(0, 200, 255, 0.35));
 
-    text-shadow: 0 0 12px rgba(0,255,255,0.9);
+    text-shadow: 0 0 14px var(--cube-text, rgba(0,255,255,0.9));
+
+    transition: background 0.3s, border 0.3s, color 0.3s;
 }
 
-/* --- POSITIONING --- */
+/* ==== LIGHT MODE ==== */
+.light .face {
+    --cube-text: #006b78;
+    --cube-border: rgba(0, 120, 140, 0.45);
+    --cube-bg: rgba(255, 255, 255, 0.18);
+    --cube-glow: rgba(0, 140, 160, 0.25);
+}
+
+/* ==== DARK MODE ==== */
+.dark .face {
+    --cube-text: #00eaff;
+    --cube-border: rgba(0, 255, 255, 0.45);
+    --cube-bg: rgba(0, 20, 40, 0.32);
+    --cube-glow: rgba(0, 200, 255, 0.55);
+}
+
+/* ==== FACE POZİSYONLARI ==== */
 .front  { transform: translateZ(140px); }
 .back   { transform: rotateY(180deg) translateZ(140px); }
 .right  { transform: rotateY(90deg) translateZ(140px); }
@@ -46,12 +74,15 @@
 .top    { transform: rotateX(90deg) translateZ(140px); }
 .bottom { transform: rotateX(-90deg) translateZ(140px); }
 
-/* --- ANIMATION --- */
+/* ==== ANİMASYON (smooth) ==== */
 @keyframes rotateCube {
-    from {
+    0% {
         transform: rotateX(0deg) rotateY(0deg);
     }
-    to {
+    50% {
+        transform: rotateX(200deg) rotateY(160deg);
+    }
+    100% {
         transform: rotateX(360deg) rotateY(360deg);
     }
 }

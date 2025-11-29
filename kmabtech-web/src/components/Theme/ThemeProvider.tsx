@@ -1,57 +1,42 @@
-// src/components/Theme/ThemeProvider.tsx
+"use client";
 
-"use client"; // Client Component olduğunu belirtir
+import { createContext, useContext, useEffect, useState } from "react";
 
-import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
+const ThemeContext = createContext<any>(null);
 
-// 1. Context Arayüzü Tanımı (TypeScript için gerekli)
-interface ThemeContextProps {
-  theme: string;
-  setTheme: (theme: string) => void;
-  toggleTheme: () => void;
-}
+export function ThemeProvider({ children }: any) {
+  const [theme, setTheme] = useState<"light" | "dark">("dark");
 
-// 2. Context Oluşturma
-const ThemeContext = createContext<ThemeContextProps | undefined>(undefined);
-
-interface Props {
-    children: ReactNode;
-}
-
-// 3. Tema Sağlayıcı (Provider)
-export function ThemeProvider({ children }: Props) {
-  const [theme, setTheme] = useState('light'); // Varsayılan tema
-
+  // 1) LocalStorage'dan oku
   useEffect(() => {
-    // LocalStorage'dan veya varsayılan olarak 'light' olarak yükle
-    const storedTheme = localStorage.getItem('theme') || 'light';
-    setTheme(storedTheme);
-    document.documentElement.className = storedTheme;
+    const saved = localStorage.getItem("theme") as "light" | "dark" | null;
+    if (saved) setTheme(saved);
   }, []);
 
+  // 2) HTML class güncelle
+  useEffect(() => {
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+      document.documentElement.classList.remove("light");
+    } else {
+      document.documentElement.classList.add("light");
+      document.documentElement.classList.remove("dark");
+    }
+
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
   const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light';
-    setTheme(newTheme);
-    localStorage.setItem('theme', newTheme);
-    
-    // HTML root class'ını anında güncelle (Tailwind'in çalışması için)
-    document.documentElement.classList.remove(theme);
-    document.documentElement.classList.add(newTheme);
+    setTheme((prev) => (prev === "light" ? "dark" : "light"));
   };
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
       {children}
     </ThemeContext.Provider>
   );
 }
 
-// 4. Hook (Kullanım Kolaylığı İçin)
 export function useTheme() {
-  const context = useContext(ThemeContext);
-  if (context === undefined) {
-    // Hook'un Provider dışında kullanılması durumunda hata fırlatır
-    throw new Error('useTheme must be used within a ThemeProvider');
-  }
-  return context;
+  return useContext(ThemeContext);
 }

@@ -4,9 +4,11 @@ import { useApi } from "@/lib/useApi";
 import { Reference } from "@/lib/types";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { useTheme } from "@/components/Theme/ThemeProvider";
 
 export default function ReferencesCarousel() {
   const { data: references } = useApi<Reference[]>("/References");
+  const { theme } = useTheme(); // ← THEME ALINDI
   const trackRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number | undefined>(undefined);
   const [isPaused, setIsPaused] = useState(false);
@@ -26,7 +28,6 @@ export default function ReferencesCarousel() {
       lastTime = timestamp;
 
       x -= SPEED * (deltaTime / 16);
-
       track.style.transform = `translateX(${x}px)`;
 
       const first = track.children[0] as HTMLElement;
@@ -41,25 +42,45 @@ export default function ReferencesCarousel() {
     };
 
     animationRef.current = requestAnimationFrame(animate);
-
     return () => cancelAnimationFrame(animationRef.current!);
   }, [references, isPaused]);
 
   if (!references) return null;
 
-  const items = [...references, ...references, ...references, ...references, ...references, ...references];
+  // Çok akıcı akış için 6 kopya
+  const items = [
+    ...references,
+    ...references,
+    ...references,
+    ...references,
+    ...references,
+    ...references,
+  ];
+
+  /* ========================
+      TEMA'YA GÖRE RENK SETİ
+  ========================= */
+  const bgStart = theme === "dark" ? "#070b38" : "#f8f9ff";
+  const bgMid   = theme === "dark" ? "#000a1f" : "#eef2ff";
+  const bgEnd   = theme === "dark" ? "#001226" : "#e3eaff";
+
+  const fadeLeft = theme === "dark" ? "#070b38" : "#f8f9ff";
+  const fadeRight = fadeLeft;
+
+  const textColor = theme === "dark" ? "text-gray-300" : "text-gray-700";
 
   return (
     <section
-      className="
-        py-20 overflow-hidden select-none 
-        bg-gradient-to-b 
-        from-[#070b38] 
-        via-[#000a1f] 
-        to-[#001226]
-      "
+      className="py-20 overflow-hidden select-none"
+      style={{
+        background: `linear-gradient(to bottom, ${bgStart}, ${bgMid}, ${bgEnd})`,
+      }}
     >
-      <h2 className="text-4xl font-bold text-center text-white mb-16">
+      <h2
+        className={`text-4xl font-bold text-center mb-16 ${
+          theme === "dark" ? "text-white" : "text-gray-900"
+        }`}
+      >
         Müşterilerimiz ve Referanslarımız
       </h2>
 
@@ -71,9 +92,6 @@ export default function ReferencesCarousel() {
         <div
           ref={trackRef}
           className="flex items-center gap-16 whitespace-nowrap will-change-transform py-4"
-          style={{
-            transition: isPaused ? "transform 0.3s ease" : "none",
-          }}
         >
           {items.map((ref, i) => (
             <div
@@ -86,27 +104,45 @@ export default function ReferencesCarousel() {
                   alt={ref.companyName}
                   width={160}
                   height={80}
-                  className="object-contain grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-300 ease-out"
+                  className={`object-contain opacity-80 grayscale group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-300`}
                 />
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg blur-sm" />
+
+                {/* Glow Hover */}
+                <div
+                  className="absolute inset-0 rounded-lg blur-sm transition-opacity duration-300"
+                  style={{
+                    background:
+                      theme === "dark"
+                        ? "linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent)"
+                        : "linear-gradient(to right, transparent, rgba(0,0,0,0.08), transparent)",
+                    opacity: 0,
+                  }}
+                />
               </div>
-              <p className="text-gray-300 text-sm uppercase mt-3 tracking-wider font-medium group-hover:text-white transition-colors duration-300">
+
+              <p
+                className={`mt-3 text-sm uppercase tracking-wider font-medium transition-colors duration-300 group-hover:text-blue-400 ${textColor}`}
+              >
                 {ref.companyName}
               </p>
             </div>
           ))}
         </div>
 
-        {/* SOL Fade */}
-        <div className="absolute left-0 top-0 bottom-0 w-32 
-          bg-gradient-to-r from-[#070b38] to-transparent 
-          z-10" 
+        {/* LEFT FADE */}
+        <div
+          className="absolute left-0 top-0 bottom-0 w-32 z-10 pointer-events-none"
+          style={{
+            background: `linear-gradient(to right, ${fadeLeft}, transparent)`,
+          }}
         />
 
-        {/* SAĞ Fade */}
-        <div className="absolute right-0 top-0 bottom-0 w-32 
-          bg-gradient-to-l from-[#070b38] to-transparent 
-          z-10" 
+        {/* RIGHT FADE */}
+        <div
+          className="absolute right-0 top-0 bottom-0 w-32 z-10 pointer-events-none"
+          style={{
+            background: `linear-gradient(to left, ${fadeRight}, transparent)`,
+          }}
         />
       </div>
     </section>

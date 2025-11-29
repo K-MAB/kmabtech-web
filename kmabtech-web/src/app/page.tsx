@@ -7,24 +7,18 @@ import ServicesTabs from "@/components/ServicesTabs";
 import ReferencesCarousel from "@/components/ReferencesCarousel";
 import Footer from "@/components/Footer";
 import { AnimateInView } from "@/components/AnimateInView";
-import { ElementType } from "react";
 import Cube from "@/components/cube";
-import FeatureHighlight from "@/components/FeatureHighlight";
 import ScrollingText from "@/components/CmdTerminal";
-
+import { ElementType } from "react";
 
 export default function HomePage() {
   return (
-    <div
-      className="min-h-screen text-white"
-      style={{
-        background:
-          "radial-gradient(circle,rgba(2, 0, 36, 1) 0%, rgba(0, 0, 43, 1) 35%, rgba(0, 14, 18, 1) 100%)",
-      }}
-    >
+    <div className="min-h-screen bg-light-bg dark:bg-dark-bg text-foreground transition-all duration-500">
+
       {/* ============ HERO SECTION ============ */}
       <section className="min-h-[calc(100vh-64px)] px-6 sm:px-8 lg:px-12 pt-28 sm:pt-20 lg:pt-32">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+
           {/* SOL TARAF */}
           <motion.div
             initial={{ opacity: 0, x: -40 }}
@@ -32,13 +26,12 @@ export default function HomePage() {
             transition={{ duration: 1 }}
             className="flex flex-col justify-center text-center lg:text-left"
           >
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6 text-black dark:text-white">
               Modern Yazılım Çözümleriyle İşinizi Dönüştürün.
             </h1>
 
-            <p className="text-base sm:text-lg md:text-xl text-gray-300 mb-10 max-w-lg mx-auto lg:mx-0">
-              ASP.NET Core ve Next.js gücüyle kurumsal, hızlı ve güvenilir web
-              siteleri geliştiriyoruz.
+            <p className="text-base sm:text-lg md:text-xl text-gray-700 dark:text-gray-300 mb-10 max-w-lg mx-auto lg:mx-0">
+              ASP.NET Core ve Next.js gücüyle kurumsal, hızlı ve güvenilir web siteleri geliştiriyoruz.
             </p>
 
             <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
@@ -52,8 +45,8 @@ export default function HomePage() {
 
               <Link
                 href="/contact"
-                className="px-8 py-3 border border-gray-400 text-gray-200 font-semibold rounded-full 
-                hover:bg-white/10 transition text-center"
+                className="px-8 py-3 border border-gray-400 text-gray-900 dark:text-gray-200 font-semibold rounded-full 
+                hover:bg-black/10 dark:hover:bg-white/10 transition text-center"
               >
                 Bize Ulaşın
               </Link>
@@ -70,14 +63,10 @@ export default function HomePage() {
             <Cube />
           </motion.div>
         </div>
-      <ScrollingText />
 
-
+        <ScrollingText />
       </section>
 
-      {/* ========= HERO ALTINA FEATURE ROW ========= */}
-
-      {/* ========= ÇİZGİ (SECTION DIVIDER) ========= */}
       <SectionDivider />
 
       {/* ============ HİZMETLER ============ */}
@@ -87,13 +76,12 @@ export default function HomePage() {
         </AnimateInView>
       </div>
 
-      {/* ========= ÇİZGİ ========= */}
       <SectionDivider />
 
       {/* ============ İŞ AKIŞI ============ */}
-      <div className="py-20 border-t border-white/10 bg-white/[0.02] backdrop-blur-sm">
+      <div className="py-20 border-t border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/[0.02] backdrop-blur-sm">
         <AnimateInView delay={0.2} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl font-bold mb-16 text-center text-white drop-shadow-lg">
+          <h2 className="text-3xl md:text-4xl font-bold mb-16 text-center text-black dark:text-white drop-shadow-lg">
             İş Akışımız ve Farkımız
           </h2>
 
@@ -117,7 +105,6 @@ export default function HomePage() {
         </AnimateInView>
       </div>
 
-      {/* ========= ÇİZGİ ========= */}
       <SectionDivider />
 
       {/* ============ REFERANSLAR ============ */}
@@ -128,14 +115,15 @@ export default function HomePage() {
       </div>
 
       {/* ============ FOOTER ============ */}
-      <div className="bg-black/50 backdrop-blur-md border-t border-white/10">
+      <div className="bg-black/10 dark:bg-black/50 backdrop-blur-md border-t border-black/10 dark:border-white/10">
         <Footer />
       </div>
+
     </div>
   );
 }
 
-/* ========== SECTION DIVIDER (ÇİZGİ) ========== */
+/* ========== SECTION DIVIDER ========= */
 function SectionDivider() {
   return (
     <motion.div
@@ -159,9 +147,19 @@ interface InfoCardProps {
 }
 
 const InfoCard: React.FC<InfoCardProps> = ({ title, description, icon: Icon }) => (
-  <div className="p-6 bg-black/20 backdrop-blur-md rounded-xl shadow-xl border border-white/10 hover:bg-black/40 transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/50 text-center md:text-left">
-    <Icon size={36} className="text-blue-400 mb-4 mx-auto md:mx-0" />
-    <h3 className="text-xl font-bold mb-3 text-white">{title}</h3>
-    <p className="text-gray-400">{description}</p>
+  <div className="
+    p-6 
+    bg-white/60 dark:bg-black/20 
+    backdrop-blur-md 
+    rounded-xl 
+    shadow-xl 
+    border border-black/20 dark:border-white/10
+    hover:bg-white/80 dark:hover:bg-black/40 
+    transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/50 
+    text-center md:text-left
+  ">
+    <Icon size={36} className="text-blue-600 dark:text-blue-400 mb-4 mx-auto md:mx-0" />
+    <h3 className="text-xl font-bold mb-3 text-black dark:text-white">{title}</h3>
+    <p className="text-gray-700 dark:text-gray-300">{description}</p>
   </div>
 );

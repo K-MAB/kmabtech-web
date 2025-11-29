@@ -12,18 +12,18 @@ export default function CmdTerminal() {
       transition={{ duration: 1 }}
       className="
         mx-auto 
-        mt-40               /* 🔥 TERMINALI AŞAĞI ALIR */
-        max-w-5xl          /* 🔥 GENİŞLİK ARTIRILDI */
+        mt-36              
+        max-w-5xl          
         rounded-xl 
         overflow-hidden
-        border border-gray-600 
-        bg-black/95 
+        border border-gray-700 
+        bg-[#0b0b0b] 
         backdrop-blur 
         shadow-[0_0_60px_rgba(0,255,255,0.25)]
       "
     >
       {/* CMD Üst Bar */}
-      <div className="flex items-center justify-between px-5 py-2 bg-[#1b1b1b] border-b border-gray-700 text-gray-300 text-[15px]">
+      <div className="flex items-center justify-between px-5 py-2 bg-[#1a1a1a] border-b border-gray-700 text-gray-300 text-[15px]">
         <span>KMAB Terminal</span>
         <div className="flex gap-2">
           <div className="w-3 h-3 rounded-full bg-red-500"></div>
@@ -45,7 +45,7 @@ export default function CmdTerminal() {
 }
 
 /* ============================================
-      CMD TYPEWRITER
+        CMD TYPEWRITER
 ============================================ */
 function CmdTypeWriter() {
   const messages = [
@@ -59,14 +59,16 @@ function CmdTypeWriter() {
   const [subIndex, setSubIndex] = useState(0);
   const [deleting, setDeleting] = useState(false);
 
-  const commandPrefix = "C:\\Users\\kmab>"; // 🔥 KMAB EKLENDİ
+  const commandPrefix = "C:\\Users\\kmab>"; // KMAB ✓
 
   useEffect(() => {
+    // Bitince silmeye başla
     if (subIndex === messages[index].length + 1 && !deleting) {
       setTimeout(() => setDeleting(true), 900);
       return;
     }
 
+    // Tam silinince sonraki mesaja geç
     if (subIndex === 0 && deleting) {
       setDeleting(false);
       setIndex((prev) => (prev + 1) % messages.length);
@@ -74,14 +76,14 @@ function CmdTypeWriter() {
     }
 
     const timeout = setTimeout(() => {
-      setSubIndex(subIndex + (deleting ? -1 : 1));
-    }, deleting ? 20 : 35);
+      setSubIndex((prev) => prev + (deleting ? -1 : 1));
+    }, deleting ? 20 : 32); // Daha hızlı ve smooth
 
     return () => clearTimeout(timeout);
   }, [subIndex, deleting]);
 
   return (
-    <div className="text-green-400 text-[19px]">
+    <div className="text-green-400 text-[19px] tracking-wide">
       {commandPrefix} {messages[index].substring(0, subIndex)}
       <span className="animate-pulse">█</span>
     </div>
