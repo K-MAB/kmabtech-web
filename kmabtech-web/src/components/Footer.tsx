@@ -32,9 +32,13 @@ export default function Footer() {
                     
                     {/* Sol Kısım: Logo ve Sosyal Medya */}
                     <div className="col-span-2">
-                        <Link href="/" className="text-2xl font-mono font-bold text-gray-900 dark:text-gray-100">
-                            {'<KMABTech/>'}
-                        </Link>
+                        <Link href="/" className="flex items-center gap-2">
+                            <img
+                                src="/logo.png"
+                                alt="KMABTech Logo"
+                                className="h-30 w-auto"
+                            />
+                            </Link>
                         <p className="mt-4 text-sm text-gray-500 dark:text-gray-400 max-w-xs">
                             Kurumsal, hızlı ve güvenilir yazılım çözümleriniz.
                         </p>

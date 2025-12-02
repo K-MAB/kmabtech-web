@@ -21,7 +21,7 @@ export function Header() {
   const navItems = [
     { href: "/", label: "Anasayfa" },
     { href: "/services", label: "Hizmetler" },
-    { href: "/products", label: "Ürünler" },
+    { href: "/products", label: "KMAB3D" },
     { href: "/blog", label: "Blog" },
     { href: "/contact", label: "İletişim" },
     { href: "/admin/dashboard", label: "Admin" },
@@ -45,14 +45,15 @@ export function Header() {
       <div className="container mx-auto max-w-7xl h-16 flex items-center justify-between px-4 sm:px-6 lg:px-8">
 
         {/* LOGO */}
-        <Link
-          href="/"
-          className={`text-xl font-mono font-bold ${
-            theme === "dark" ? "text-white" : "text-gray-900"
-          }`}
-        >
-          {"<KMABTech />"}
+        
+        <Link href="/" className="flex items-center gap-2">
+          <img
+            src="/logo.png"
+            alt="KMABTech Logo"
+            className="h-30 w-auto"
+          />
         </Link>
+
 
         {/* DESKTOP MENU */}
         <nav className="hidden md:flex space-x-4">
