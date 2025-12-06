@@ -1,43 +1,146 @@
-import axios from 'axios';
+import axios from "axios";
 
 const BASE_URL = "https://localhost:44322";
 const API_URL = `${BASE_URL}/api`;
 
+// ---------------------------------------------------
+// AXIOS INSTANCE
+// ---------------------------------------------------
+const apiClient = axios.create({
+  baseURL: API_URL,
+});
+
+// ---------------------------------------------------
+// INTERCEPTOR — TOKEN EKLEME
+// ---------------------------------------------------
+apiClient.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// ---------------------------------------------------
+// EXPORT EDİLEN API FONKSİYONLARI
+// ---------------------------------------------------
 export const api = {
   baseUrl: BASE_URL,
 
+  // ====================== CATEGORIES ======================
   getCategories: async () => {
-    const res = await axios.get(`${API_URL}/categories`);
+    const res = await apiClient.get("/Categories");
     return res.data;
   },
 
+  // ====================== PRODUCTS ======================
   getProducts: async () => {
-    const res = await axios.get(`${API_URL}/products`);
+    const res = await apiClient.get("/Products");
     return res.data;
   },
 
-  getProductById: async (id) => {
-    const res = await axios.get(`${API_URL}/products/${id}`);
+  getProductById: async (id: number) => {
+    const res = await apiClient.get(`/Products/${id}`);
     return res.data;
   },
 
-  createProduct: async (productData) => {
-    const res = await axios.post(`${API_URL}/products`, productData);
+  createProduct: async (productData: any) => {
+    const res = await apiClient.post("/Products", productData);
     return res.data;
   },
 
-  deleteProduct: async (id) => {
-    await axios.delete(`${API_URL}/products/${id}`);
+  deleteProduct: async (id: number) => {
+    await apiClient.delete(`/Products/${id}`);
   },
 
-  uploadImage: async (file) => {
+  uploadImage: async (file: File) => {
     const fd = new FormData();
     fd.append("file", file);
 
-    const res = await axios.post(`${API_URL}/upload`, fd, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-
+    const res = await apiClient.post("/Upload", fd);
     return res.data.url;
+  },
+
+  // ====================== SERVICES ======================
+  getServices: async () => {
+    const res = await apiClient.get("/Services");
+    return res.data;
+  },
+
+  createService: async (serviceData: any) => {
+    const res = await apiClient.post("/Services", serviceData);
+    return res.data;
+  },
+
+  updateService: async (id: number, serviceData: any) => {
+    const res = await apiClient.put(`/Services/${id}`, serviceData);
+    return res.data;
+  },
+
+  deleteService: async (id: number) => {
+    await apiClient.delete(`/Services/${id}`);
+  },
+
+  // ====================== REFERENCES ======================
+  getReferences: async () => {
+    const res = await apiClient.get("/References");
+    return res.data;
+  },
+
+  createReference: async (formData: FormData) => {
+    const res = await apiClient.post("/References", formData);
+    return res.data;
+  },
+
+  updateReference: async (id: number, formData: FormData) => {
+    const res = await apiClient.put(`/References/${id}`, formData);
+    return res.data;
+  },
+
+  deleteReference: async (id: number) => {
+    await apiClient.delete(`/References/${id}`);
+  },
+
+  // ====================== BLOG POSTS ======================
+  getBlogPosts: async () => {
+    const res = await apiClient.get("/BlogPosts");
+    return res.data;
+  },
+
+  createBlogPost: async (formData: FormData) => {
+    const res = await apiClient.post("/BlogPosts", formData);
+    return res.data;
+  },
+
+  updateBlogPost: async (id: number, formData: FormData) => {
+    const res = await apiClient.put(`/BlogPosts/${id}`, formData);
+    return res.data;
+  },
+
+  deleteBlogPost: async (id: number) => {
+    await apiClient.delete(`/BlogPosts/${id}`);
+  },
+
+  getBlogPostById: async (id: number) => {
+    const res = await apiClient.get(`/BlogPosts/${id}`);
+    return res.data;
+  },
+  getCategories: async () => {
+    const res = await apiClient.get("/Categories");
+    return res.data;
+  },
+
+  createCategory: async (data: { name: string }) => {
+    const res = await apiClient.post("/Categories", data);
+    return res.data;
+  },
+
+  deleteCategory: async (id: number) => {
+    await apiClient.delete(`/Categories/${id}`);
   },
 };
