@@ -4,9 +4,18 @@ import Link from "next/link";
 import { api } from "@/services/api";
 import { useState } from "react";
 
-export default function ProductCard({ product }) {
+type Product = {
+  id: string | number;
+  name: string;
+  description?: string;
+  price: number;
+  imageUrls?: string[];
+};
+
+export default function ProductCard({ product }: { product: Product }) {
+
   const img =
-    product.imageUrls?.length > 0
+    product.imageUrls && product.imageUrls.length > 0
       ? `${api.baseUrl}${product.imageUrls[0]}`
       : "/no-image.png";
 
@@ -34,16 +43,16 @@ export default function ProductCard({ product }) {
           ============================================ */}
           <div className="relative h-2/3 overflow-hidden bg-[#050814]">
 
-            {/* --- Ürün alttan yukarı doğru yazıcıdan çıkıyormuş gibi oluşur --- */}
+            {/* --- Ürün alttan yukarı çıkıyormuş gibi --- */}
             <motion.img
               src={img}
               className="absolute inset-0 w-full h-full object-contain"
-              initial={{ clipPath: "inset(100% 0 0 0)" }}   // tamamen gizli
-              animate={{ clipPath: "inset(0% 0 0 0)" }}    // alttan yukarı açılır
+              initial={{ clipPath: "inset(100% 0 0 0)" }}
+              animate={{ clipPath: "inset(0% 0 0 0)" }}
               transition={{ duration: 1.8, ease: "easeInOut" }}
             />
 
-            {/* --- Print Head Çizgisi (yukarı doğru hareket eden bar) --- */}
+            {/* --- Yazıcı çizgisi --- */}
             <motion.div
               className="absolute left-0 w-full h-[3px] bg-blue-400 shadow-[0_0_12px_rgba(0,170,255,1)]"
               initial={{ bottom: "0%" }}
@@ -56,7 +65,6 @@ export default function ProductCard({ product }) {
               ============================================ */}
             {hover && (
               <>
-                {/* LEFT PIECE */}
                 <motion.img
                   src={img}
                   className="absolute inset-0 w-full h-full object-contain opacity-40"
@@ -65,7 +73,6 @@ export default function ProductCard({ product }) {
                   transition={{ type: "spring", stiffness: 70 }}
                 />
 
-                {/* MIDDLE PIECE */}
                 <motion.img
                   src={img}
                   className="absolute inset-0 w-full h-full object-contain opacity-50"
@@ -74,7 +81,6 @@ export default function ProductCard({ product }) {
                   transition={{ type: "spring", stiffness: 70 }}
                 />
 
-                {/* RIGHT PIECE */}
                 <motion.img
                   src={img}
                   className="absolute inset-0 w-full h-full object-contain opacity-40"
@@ -90,7 +96,9 @@ export default function ProductCard({ product }) {
                 TEXT AREA
           ============================================ */}
           <div className="h-1/3 p-5 flex flex-col justify-between">
-            <h3 className="text-xl font-semibold text-white">{product.name}</h3>
+            <h3 className="text-xl font-semibold text-white">
+              {product.name}
+            </h3>
 
             <p className="text-gray-400 text-sm line-clamp-2">
               {product.description}

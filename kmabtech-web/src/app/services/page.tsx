@@ -4,6 +4,7 @@ import { useApi } from "@/lib/useApi";
 import { Service } from "@/lib/types";
 import { motion } from "framer-motion";
 import { Zap, Shield, Code, GitBranch, Database, Globe, Cpu } from "lucide-react";
+import { JSX } from "react";
 
 export default function ServicesPage() {
   const { data: services } = useApi<Service[]>("/Services");

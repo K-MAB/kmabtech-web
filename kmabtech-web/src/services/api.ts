@@ -1,34 +1,37 @@
 import axios from "axios";
 
+// ===================================================
+// BASE URL
+// ===================================================
 const BASE_URL = "https://localhost:44322";
 const API_URL = `${BASE_URL}/api`;
 
-// ---------------------------------------------------
+// ===================================================
 // AXIOS INSTANCE
-// ---------------------------------------------------
+// ===================================================
 const apiClient = axios.create({
   baseURL: API_URL,
 });
 
-// ---------------------------------------------------
+// ===================================================
 // INTERCEPTOR — TOKEN EKLEME
-// ---------------------------------------------------
+// ===================================================
 apiClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
-
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("token");
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
-
     return config;
   },
   (error) => Promise.reject(error)
 );
 
-// ---------------------------------------------------
+// ===================================================
 // EXPORT EDİLEN API FONKSİYONLARI
-// ---------------------------------------------------
+// ===================================================
 export const api = {
   baseUrl: BASE_URL,
 
@@ -36,6 +39,15 @@ export const api = {
   getCategories: async () => {
     const res = await apiClient.get("/Categories");
     return res.data;
+  },
+
+  createCategory: async (data: { name: string }) => {
+    const res = await apiClient.post("/Categories", data);
+    return res.data;
+  },
+
+  deleteCategory: async (id: number) => {
+    await apiClient.delete(`/Categories/${id}`);
   },
 
   // ====================== PRODUCTS ======================
@@ -112,6 +124,11 @@ export const api = {
     return res.data;
   },
 
+  getBlogPostById: async (id: number) => {
+    const res = await apiClient.get(`/BlogPosts/${id}`);
+    return res.data;
+  },
+
   createBlogPost: async (formData: FormData) => {
     const res = await apiClient.post("/BlogPosts", formData);
     return res.data;
@@ -124,23 +141,5 @@ export const api = {
 
   deleteBlogPost: async (id: number) => {
     await apiClient.delete(`/BlogPosts/${id}`);
-  },
-
-  getBlogPostById: async (id: number) => {
-    const res = await apiClient.get(`/BlogPosts/${id}`);
-    return res.data;
-  },
-  getCategories: async () => {
-    const res = await apiClient.get("/Categories");
-    return res.data;
-  },
-
-  createCategory: async (data: { name: string }) => {
-    const res = await apiClient.post("/Categories", data);
-    return res.data;
-  },
-
-  deleteCategory: async (id: number) => {
-    await apiClient.delete(`/Categories/${id}`);
   },
 };

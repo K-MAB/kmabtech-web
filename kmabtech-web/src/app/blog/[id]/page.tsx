@@ -22,12 +22,21 @@ interface BlogPostDetail {
 
 export default function BlogDetailPage() {
   const params = useParams();
-  const { id } = params;
 
-  // API İsteği
-  const { data: post, loading } = useApi<BlogPostDetail>(
-    id ? `/BlogPosts/${id}` : null
-  );
+  // ✅ id artık %100 güvenli şekilde string oluyor
+  const rawId = params?.id;
+  const id =
+    typeof rawId === "string"
+      ? rawId
+      : Array.isArray(rawId)
+      ? rawId[0]
+      : undefined;
+
+  // ✅ API İsteği (null değil undefined gönderiyoruz)
+ const { data: post, loading } = useApi<BlogPostDetail>(
+  id ? `/BlogPosts/${id}` : ""
+);
+
 
   // Scroll Progress Bar
   const { scrollYProgress } = useScroll();
@@ -172,7 +181,6 @@ export default function BlogDetailPage() {
       {/* Arka Plan Efektleri */}
       <div className="fixed top-1/2 left-0 w-96 h-96 bg-blue-600/10 rounded-full blur-[120px] pointer-events-none -z-10" />
       <div className="fixed bottom-0 right-0 w-96 h-96 bg-purple-600/10 rounded-full blur-[120px] pointer-events-none -z-10" />
-
     </div>
   );
 }
