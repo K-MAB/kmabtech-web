@@ -125,7 +125,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                         <span>Referanslar</span>
                     </Link>
 
-                    {/* BLOG */}
                     <Link
                         href="/admin/blog"
                         className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors 
@@ -136,6 +135,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     >
                         <FileText size={20} />
                         <span>Blog Yazıları</span>
+                    </Link>
+                      <Link
+                        href="/admin/messages"
+                        className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors 
+                            ${pathname.startsWith('/admin/blog')
+                                ? 'bg-blue-600 text-white'
+                                : 'text-gray-400 hover:bg-gray-700 hover:text-white'
+                            }`}
+                    >
+                        <FileText size={20} />
+                        <span>Mesahlar</span>
                     </Link>
                 </nav>
 

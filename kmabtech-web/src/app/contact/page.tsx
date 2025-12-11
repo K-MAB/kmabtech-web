@@ -8,6 +8,7 @@ import { Send, Mail, MapPin, Phone, CheckCircle, Loader2, Terminal } from "lucid
 type FormData = {
   name: string;
   email: string;
+  phone: string;   // 📌 Telefon eklendi
   subject: string;
   message: string;
 };
@@ -17,6 +18,7 @@ export default function ContactPage() {
   const [formData, setFormData] = useState<FormData>({
     name: "",
     email: "",
+    phone: "",   // 📌 Yeni alan
     subject: "",
     message: "",
   });
@@ -35,18 +37,17 @@ export default function ContactPage() {
     setStatus("loading");
 
     try {
-      // API İsteği
-      const response = await fetch("http://localhost:5000/api/ContactMessages", { // BURAYA KENDİ API URL'İNİ YAZ (Localhost portuna dikkat et)
+      const response = await fetch( `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/ContactMessages`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formData), // 📌 Artık phone da gidiyor
       });
 
       if (response.ok) {
         setStatus("success");
-        setFormData({ name: "", email: "", subject: "", message: "" }); // Formu temizle
+        setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
       } else {
         setStatus("error");
       }
@@ -63,19 +64,17 @@ export default function ContactPage() {
         background: "radial-gradient(circle, rgba(2,0,36,1) 0%, rgba(0,0,43,1) 35%, rgba(0,14,18,1) 100%)",
       }}
     >
-      {/* Arka Plan Dekorasyon (Cyber Grid) */}
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none" />
       
       <div className="max-w-6xl w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 relative z-10">
         
-        {/* SOL TARAF: İLETİŞİM BİLGİLERİ & METİN */}
+        {/* SOL TARAF */}
         <motion.div 
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
           className="flex flex-col justify-center"
         >
-     
 
           <h1 className="text-5xl md:text-6xl font-extrabold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-500">
             Bir Projeniz <br />
@@ -85,7 +84,7 @@ export default function ContactPage() {
           </h1>
 
           <p className="text-gray-400 text-lg mb-10 leading-relaxed">
-            Dijital dünyada iz bırakmak için hazırsanız, biz de hazırız. 
+            Dijital dünyada iz bırakmak için hazırsanız, biz de hazırız.
             Aşağıdaki formu doldurun veya iletişim kanallarımızdan bize ulaşın.
             Ekibimiz 24 saat içinde dönüş yapacaktır.
           </p>
@@ -97,14 +96,14 @@ export default function ContactPage() {
           </div>
         </motion.div>
 
-        {/* SAĞ TARAF: FORM PANELİ */}
+        {/* SAĞ TARAF */}
         <motion.div
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
           <div className="relative group">
-            {/* Neon Border Effect */}
+
             <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 via-purple-500 to-blue-500 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
             
             <div className="relative bg-[#0a0a16]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl">
@@ -134,23 +133,34 @@ export default function ContactPage() {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-5">
+                  
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <InputGroup 
                       label="Adınız Soyadınız" 
                       name="name" 
-                      placeholder="yücel kandaş" 
-                      value={formData.name} 
-                      onChange={handleChange} 
+                      placeholder="yücel kandaş"
+                      value={formData.name}
+                      onChange={handleChange}
                     />
                     <InputGroup 
                       label="E-posta Adresi" 
-                      name="email" 
+                      name="email"
                       type="email"
-                      placeholder="ornek@sirket.com" 
-                      value={formData.email} 
-                      onChange={handleChange} 
+                      placeholder="ornek@sirket.com"
+                      value={formData.email}
+                      onChange={handleChange}
                     />
                   </div>
+
+                  {/* 📌 Buraya Telefon Alanı Eklendi */}
+                  <InputGroup 
+                    label="Telefon Numaranız"
+                    name="phone"
+                    type="text"
+                    placeholder="+90 5XX XXX XX XX"
+                    value={formData.phone}
+                    onChange={handleChange}
+                  />
 
                   <InputGroup 
                     label="Konu" 
@@ -197,7 +207,7 @@ export default function ContactPage() {
                       </>
                     )}
                   </button>
-                  
+
                   {status === "error" && (
                     <p className="text-red-400 text-sm text-center mt-2">
                       Bir hata oluştu. Lütfen tekrar deneyin.

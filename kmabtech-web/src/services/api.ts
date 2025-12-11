@@ -19,7 +19,10 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(
   (config) => {
     if (typeof window !== "undefined") {
-      const token = localStorage.getItem("token");
+
+      // 🔥 DÜZELTİLMİŞ SATIR — Artık doğru token key okunuyor
+      const token = localStorage.getItem("jwtToken");
+
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -56,10 +59,11 @@ export const api = {
     return res.data;
   },
 
-  getProductById: async (id: number) => {
-    const res = await apiClient.get(`/Products/${id}`);
-    return res.data;
-  },
+getProductById: async (id: number) => {
+  const res = await apiClient.get(`/Products/${id}`);
+  return res.data;
+},
+
 
   createProduct: async (productData: any) => {
     const res = await apiClient.post("/Products", productData);
@@ -77,6 +81,10 @@ export const api = {
     const res = await apiClient.post("/Upload", fd);
     return res.data.url;
   },
+  updateProduct: async (id: number, data: any) => {
+  const res = await apiClient.put(`/Products/${id}`, data);
+  return res.data;
+},
 
   // ====================== SERVICES ======================
   getServices: async () => {
@@ -142,4 +150,20 @@ export const api = {
   deleteBlogPost: async (id: number) => {
     await apiClient.delete(`/BlogPosts/${id}`);
   },
+
+  // ====================== CONTACT MESSAGES ======================
+  getContactMessages: async () => {
+    const res = await apiClient.get("/ContactMessages");
+    return res.data;
+  },
+  deleteContactMessage: async (id: number) => {
+    const res = await apiClient.delete(`/ContactMessages/${id}`);
+    return res.data;
+  },
+getDashboardStats: async () => {
+  const res = await apiClient.get("/dashboard");
+  return res.data;
+},
+
+  
 };

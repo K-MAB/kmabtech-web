@@ -44,13 +44,13 @@ export default function ProductCard({ product }: { product: Product }) {
           <div className="relative h-2/3 overflow-hidden bg-[#050814]">
 
             {/* --- Ürün alttan yukarı çıkıyormuş gibi --- */}
-            <motion.img
-              src={img}
-              className="absolute inset-0 w-full h-full object-contain"
-              initial={{ clipPath: "inset(100% 0 0 0)" }}
-              animate={{ clipPath: "inset(0% 0 0 0)" }}
-              transition={{ duration: 1.8, ease: "easeInOut" }}
-            />
+             <motion.img
+    src={img}
+    className="absolute inset-0 w-full h-full object-cover"
+    initial={{ clipPath: "inset(100% 0 0 0)" }}
+    animate={{ clipPath: "inset(0% 0 0 0)" }}
+    transition={{ duration: 1.8, ease: "easeInOut" }}
+  />
 
             {/* --- Yazıcı çizgisi --- */}
             <motion.div

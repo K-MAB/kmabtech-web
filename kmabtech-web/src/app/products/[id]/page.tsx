@@ -51,16 +51,16 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
     let colorClass = "text-gray-200 border-gray-600/30 hover:bg-[#1A253F]";
     let iconClass = "text-gray-400";
 
-    if (link.includes("google")) {
-        name = "Google Store";
+    if (link.includes("shopier")) {
+        name = "SHOPİER";
         colorClass = "text-blue-300 border-blue-600/50 hover:bg-blue-900/40";
         iconClass = "text-blue-400";
-    } else if (link.includes("hepsiburada")) {
-        name = "Hepsiburada";
+    } else if (link.includes("trendyol")) {
+        name = "TRENDYOL";
         colorClass = "text-orange-300 border-orange-600/50 hover:bg-orange-900/40";
         iconClass = "text-orange-400";
-    } else if (link.includes("amazon")) {
-        name = "Amazon";
+    } else if (link.includes("kmabtech")) {
+        name = "kmabtech.com çok yakında";
         colorClass = "text-yellow-300 border-yellow-600/50 hover:bg-yellow-900/40";
         iconClass = "text-yellow-400";
     }
@@ -98,7 +98,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                 key={currentImage} 
                 src={currentImage}
                 alt={product.name}
-                className="w-full h-full object-contain rounded-2xl p-2 bg-[#000000]/10"
+                className="w-full h-full object-cover rounded-2xl p-2 bg-[#000000]/10"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, ease: "easeOut" }}
@@ -153,7 +153,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                 {product.name}
               </h1>
 
-              <div className="text-8xl font-black mt-8 text-transparent bg-clip-text 
+              <div className="text-5xl font-black mt-8 text-transparent bg-clip-text 
                             bg-gradient-to-r from-cyan-400 to-blue-500 animate-pulse-slow">
                 {product.price}
                 <span className="text-3xl font-bold text-gray-400 ml-2"> ₺</span>

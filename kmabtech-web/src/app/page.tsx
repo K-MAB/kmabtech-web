@@ -26,14 +26,41 @@ export default function HomePage() {
             transition={{ duration: 1 }}
             className="flex flex-col justify-center text-center lg:text-left"
           >
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6 text-black dark:text-white">
-              Modern Yazılım Çözümleriyle İşinizi Dönüştürün.
-            </h1>
+<h1
+  className="
+    text-4xl md:text-5xl lg:text-6xl 
+    font-extrabold leading-tight mb-6
+    bg-gradient-to-r from-[#00eaff] via-[#3b82f6] to-[#7c3aed]
+    bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(0,238,255,0.6)]
+  "
+>
+  Modern Yazılım Çözümleriyle İşinizi Dönüştürün.
+</h1>
+<motion.p
+  initial={{ opacity: 0.6 }}
+  animate={{ opacity: 1 }}
+  transition={{
+    duration: 1.8,
+    repeat: Infinity,
+    repeatType: "reverse",
+  }}
+  className="
+    text-lg md:text-xl 
+    mb-8 leading-relaxed max-w-2xl 
+    mx-auto lg:mx-0 font-semibold
+    bg-gradient-to-r from-[#00eaff] via-[#3b82f6] to-[#7c3aed]
+    bg-clip-text text-transparent
+    drop-shadow-[0_0_12px_rgba(0,238,255,0.5)]
+  "
+>
+  İşletmenizi dijital dünyada bir adım öne taşımak için modern, ölçeklenebilir 
+  ve yüksek performanslı yazılım çözümleri sunuyoruz. Küçük ölçekli girişimlerden 
+  kurumsal yapılara kadar; ihtiyaçlarınıza özel, güvenli, hızlı ve geleceğe hazır 
+  teknolojiler geliştiriyoruz. Sizin için tasarlıyor, sizinle büyüyor, işinizi 
+  dijital çağda en güçlü hâline getiriyoruz.
+</motion.p>
 
-            <p className="text-base sm:text-lg md:text-xl text-gray-700 dark:text-gray-300 mb-10 max-w-lg mx-auto lg:mx-0">
-              ASP.NET Core ve Next.js gücüyle kurumsal, hızlı ve güvenilir web siteleri geliştiriyoruz.
-            </p>
-
+         
             <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
               <Link
                 href="/services"

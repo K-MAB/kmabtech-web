@@ -2,10 +2,20 @@
 
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { api } from "@/services/api";
-import { Trash2, Plus, Upload, X, Save, Package, Link as LinkIcon, Info } from "lucide-react";
+import {
+  Trash2,
+  Plus,
+  Upload,
+  X,
+  Save,
+  Package,
+  Link as LinkIcon,
+  Info,
+  Edit,
+} from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 
-/* ----------------------------- TYPE DEFINITIONS ----------------------------- */
+/* ------------------ TYPES ------------------ */
 interface Category {
   id: number;
   name: string;
@@ -14,26 +24,40 @@ interface Category {
 interface Product {
   id: number;
   name: string;
-  categoryName?: string;
+  description: string;
   price: number;
-  imageUrls: string[];
+  categoryId: number;
+  categoryName?: string;
+
   color?: string;
+  material?: string;
   weight?: string;
+  dimensions?: string;
+
+  link1?: string;
+  link2?: string;
+  link3?: string;
+
+  imageUrls: string[];
 }
 
-/* -------------------------------------------------------------------------- */
-/*                               ADMIN PAGE                                   */
-/* -------------------------------------------------------------------------- */
+/* ============================================================
+                     ADMIN PRODUCT PAGE
+============================================================ */
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Resim işlemleri
+  /* ------------------ IMAGE STATES ------------------ */
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
-  // Form Data
+  /* ------------------ EDIT MODE ------------------ */
+  const [editId, setEditId] = useState<number | null>(null);
+  const isEdit = editId !== null;
+
+  /* ------------------ FORM DATA ------------------ */
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -46,14 +70,17 @@ export default function AdminProductsPage() {
     link1: "",
     link2: "",
     link3: "",
+    imageUrls: [] as string[], // Eski resimler buradan gelir
   });
 
-  /* ----------------------------- VERİYİ YÜKLE ----------------------------- */
+  /* ============================================================
+                       STARTUP LOAD
+  ============================================================ */
   useEffect(() => {
-    fetchData();
+    loadData();
   }, []);
 
-  const fetchData = async () => {
+  const loadData = async () => {
     try {
       const [catRes, prodRes] = await Promise.all([
         api.getCategories(),
@@ -62,57 +89,90 @@ export default function AdminProductsPage() {
 
       setCategories(catRes);
       setProducts(prodRes);
-    } catch (error) {
-      console.error("Veri çekme hatası:", error);
+    } catch (err) {
       toast.error("Veriler yüklenemedi!");
     }
   };
 
-  /* ----------------------------- FORM DEĞİŞİMİ ---------------------------- */
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  /* ============================================================
+                        FORM CHANGE
+  ============================================================ */
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((p) => ({ ...p, [name]: value }));
   };
 
-  /* ----------------------------- RESİM YÜKLEME ---------------------------- */
+  /* ============================================================
+                          IMAGE UPLOAD
+  ============================================================ */
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files ? Array.from(e.target.files) : [];
 
-    if (files.length + selectedFiles.length > 4) {
-      toast.error("En fazla 4 resim ekleyebilirsiniz.");
-      return;
-    }
-
-    const newPreviews = files.map((file) => URL.createObjectURL(file));
+    const previews = files.map((f) => URL.createObjectURL(f));
 
     setSelectedFiles((prev) => [...prev, ...files]);
-    setImagePreviews((prev) => [...prev, ...newPreviews]);
+    setImagePreviews((prev) => [...prev, ...previews]);
   };
 
-  const removeImage = (index: number) => {
-    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
-    setImagePreviews((prev) => prev.filter((_, i) => i !== index));
+  /* REMOVE OLD IMAGE */
+  const removeOldImage = (url: string) => {
+    setFormData((p) => ({
+      ...p,
+      imageUrls: p.imageUrls.filter((x) => x !== url),
+    }));
   };
 
-  /* ----------------------------- ÜRÜN KAYDET ------------------------------ */
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  /* REMOVE NEW UPLOADED IMAGE */
+  const removeNewImage = (index: number) => {
+    setSelectedFiles((p) => p.filter((_, i) => i !== index));
+    setImagePreviews((p) => p.filter((_, i) => i !== index));
+  };
 
-    if (!formData.categoryId) return toast.error("Lütfen kategori seçin!");
+  /* ============================================================
+                        SELECT PRODUCT FOR EDIT
+  ============================================================ */
+  const selectProduct = (p: Product) => {
+    setEditId(p.id);
 
-    setLoading(true);
+    setFormData({
+      name: p.name,
+      description: p.description,
+      price: p.price.toString(),
+      categoryId: p.categoryId.toString(),
+
+      color: p.color || "",
+      material: p.material || "",
+      weight: p.weight || "",
+      dimensions: p.dimensions || "",
+
+      link1: p.link1 || "",
+      link2: p.link2 || "",
+      link3: p.link3 || "",
+
+      imageUrls: p.imageUrls || [],
+    });
+
+    setSelectedFiles([]);
+    setImagePreviews([]);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  /* ============================================================
+                        CREATE PRODUCT
+  ============================================================ */
+  const handleCreate = async () => {
     const toastId = toast.loading("Ürün kaydediliyor...");
 
     try {
-      // 1. Resimleri yükle
       const uploadedUrls: string[] = [];
 
-      for (const file of selectedFiles) {
-        const url = await api.uploadImage(file);
-        uploadedUrls.push(url);
+      // Yeni seçilen resimleri yükle
+      for (const f of selectedFiles) {
+        uploadedUrls.push(await api.uploadImage(f));
       }
 
-      // 2. Veriyi hazırla
       const payload = {
         ...formData,
         price: parseFloat(formData.price),
@@ -122,266 +182,334 @@ export default function AdminProductsPage() {
 
       await api.createProduct(payload);
 
-      toast.success("Ürün başarıyla kaydedildi!", { id: toastId });
+      toast.success("Ürün başarıyla eklendi!", { id: toastId });
 
-      // Form sıfırla
-      setFormData({
-        name: "",
-        description: "",
-        price: "",
-        categoryId: "",
-        color: "",
-        material: "",
-        weight: "",
-        dimensions: "",
-        link1: "",
-        link2: "",
-        link3: "",
-      });
-
-      setSelectedFiles([]);
-      setImagePreviews([]);
-
-      fetchData();
-    } catch (error) {
-      console.error(error);
-      toast.error("Bir hata oluştu!", { id: toastId });
-    } finally {
-      setLoading(false);
+      resetForm();
+      loadData();
+    } catch (err) {
+      toast.error("Hata oluştu!", { id: toastId });
     }
   };
 
-  /* ----------------------------- SİLME ---------------------------- */
+  /* ============================================================
+                        UPDATE PRODUCT
+  ============================================================ */
+  const handleUpdate = async () => {
+    if (!editId) return;
+
+    const toastId = toast.loading("Ürün güncelleniyor...");
+
+    try {
+      const uploadedUrls: string[] = [];
+
+      for (const file of selectedFiles) {
+        uploadedUrls.push(await api.uploadImage(file));
+      }
+
+      const finalUrls = [...formData.imageUrls, ...uploadedUrls];
+
+      const payload = {
+        ...formData,
+        price: parseFloat(formData.price),
+        categoryId: parseInt(formData.categoryId),
+        imageUrls: finalUrls,
+      };
+
+      await api.updateProduct(editId, payload);
+
+      toast.success("Ürün başarıyla güncellendi", { id: toastId });
+      resetForm();
+      loadData();
+    } catch (err) {
+      toast.error("Güncelleme hatası!", { id: toastId });
+    }
+  };
+
+  /* ============================================================
+                        DELETE PRODUCT
+  ============================================================ */
   const handleDelete = async (id: number) => {
-    if (!confirm("Bu ürünü silmek istediğinize emin misiniz?")) return;
+    if (!confirm("Silmek istiyor musun?")) return;
 
     try {
       await api.deleteProduct(id);
       toast.success("Ürün silindi.");
-      setProducts((prev) => prev.filter((p) => p.id !== id));
+      setProducts((p) => p.filter((x) => x.id !== id));
     } catch {
-      toast.error("Silme işlemi başarısız.");
+      toast.error("Silinemedi!");
     }
   };
 
-  /* -------------------------------------------------------------------------- */
-  /*                               TASARIM BAŞLIYOR                              */
-  /* -------------------------------------------------------------------------- */
+  /* ============================================================
+                        RESET FORM
+  ============================================================ */
+  const resetForm = () => {
+    setEditId(null);
+    setSelectedFiles([]);
+    setImagePreviews([]);
 
+    setFormData({
+      name: "",
+      description: "",
+      price: "",
+      categoryId: "",
+      color: "",
+      material: "",
+      weight: "",
+      dimensions: "",
+      link1: "",
+      link2: "",
+      link3: "",
+      imageUrls: [],
+    });
+  };
+
+  /* ============================================================
+                        FORM SUBMIT HANDLER
+  ============================================================ */
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    isEdit ? handleUpdate() : handleCreate();
+  };
+
+  /* ============================================================
+                        PAGE RENDER STARTS
+  ============================================================ */
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-8 font-sans">
+    <div className="min-h-screen bg-gray-900 text-white p-8">
       <Toaster position="top-right" />
 
-      <h1 className="text-3xl font-bold mb-8 text-blue-400 border-b border-gray-700 pb-4">
-        Admin Panel <span className="text-gray-500 text-lg font-normal">/ Ürün Yönetimi</span>
-      </h1>
+      <h1 className="text-3xl font-bold mb-8 text-blue-400">Ürün Yönetimi</h1>
 
-      {/* FORM */}
-      <div className="bg-gray-800 p-6 rounded-xl shadow-2xl mb-10 border border-gray-700">
+      {/* --------------------- FORM --------------------- */}
+      <div className="bg-gray-800 p-6 rounded-xl shadow-xl border border-gray-700 mb-10">
         <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 text-blue-300">
-          <Plus size={24} /> Yeni Ürün Ekle
+          {isEdit ? (
+            <>
+              <Edit size={24} /> Ürünü Düzenle
+            </>
+          ) : (
+            <>
+              <Plus size={24} /> Yeni Ürün Ekle
+            </>
+          )}
         </h2>
 
         <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-
           {/* SOL KOLON */}
           <div className="space-y-5">
-            <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
-              <Package size={16} /> Temel Bilgiler
-            </h3>
-
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">Ürün Adı</label>
-              <input
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 focus:border-blue-500 outline-none"
-                placeholder="Örn: Kablosuz Mouse"
-              />
-            </div>
+            <input
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+              className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg"
+              placeholder="Ürün adı"
+            />
 
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm text-gray-400 mb-1">Fiyat (₺)</label>
-                <input
-                  type="number"
-                  name="price"
-                  value={formData.price}
-                  onChange={handleChange}
-                  required
-                  className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 focus:border-blue-500 outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm text-gray-400 mb-1">Kategori</label>
-                <select
-                  name="categoryId"
-                  value={formData.categoryId}
-                  onChange={handleChange}
-                  required
-                  className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 focus:border-blue-500 outline-none"
-                >
-                  <option value="">Seçiniz</option>
-                  {categories.map((cat) => (
-                    <option key={cat.id} value={cat.id}>{cat.name}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">Açıklama</label>
-              <textarea
-                name="description"
-                value={formData.description}
+              <input
+                name="price"
+                type="number"
+                value={formData.price}
                 onChange={handleChange}
-                rows={4}
-                className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 focus:border-blue-500 outline-none"
+                className="p-3 bg-gray-700 border border-gray-600 rounded-lg"
+                placeholder="Fiyat"
               />
+
+              <select
+                name="categoryId"
+                value={formData.categoryId}
+                onChange={handleChange}
+                className="p-3 bg-gray-700 border border-gray-600 rounded-lg"
+              >
+                <option value="">Kategori Seç</option>
+                {categories.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
             </div>
+
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              rows={4}
+              className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg"
+              placeholder="Açıklama"
+            />
           </div>
 
           {/* SAĞ KOLON */}
-          <div className="space-y-6">
-            {/* Teknik Bilgiler */}
-            <div>
-              <h3 className="text-sm font-bold text-gray-500 uppercase mb-3 flex items-center gap-2">
-                <Info size={16} /> Teknik Detaylar
-              </h3>
+          <div className="space-y-5">
+            <input
+              name="color"
+              value={formData.color}
+              onChange={handleChange}
+              placeholder="Renk"
+              className="p-3 w-full bg-gray-700 border border-gray-600 rounded-lg"
+            />
 
-              <div className="grid grid-cols-2 gap-4">
-                <input name="color" value={formData.color} onChange={handleChange} placeholder="Renk" className="bg-gray-700 border border-gray-600 rounded-lg p-3" />
-                <input name="material" value={formData.material} onChange={handleChange} placeholder="Materyal" className="bg-gray-700 border border-gray-600 rounded-lg p-3" />
-                <input name="weight" value={formData.weight} onChange={handleChange} placeholder="Ağırlık" className="bg-gray-700 border border-gray-600 rounded-lg p-3" />
-                <input name="dimensions" value={formData.dimensions} onChange={handleChange} placeholder="Boyut" className="bg-gray-700 border border-gray-600 rounded-lg p-3" />
-              </div>
-            </div>
+            <input
+              name="material"
+              value={formData.material}
+              onChange={handleChange}
+              placeholder="Materyal"
+              className="p-3 w-full bg-gray-700 border border-gray-600 rounded-lg"
+            />
 
-            {/* Linkler */}
-            <div>
-              <h3 className="text-sm font-bold text-gray-500 uppercase mb-3 flex items-center gap-2">
-                <LinkIcon size={16} /> Satış Linkleri
-              </h3>
+            <input
+              name="weight"
+              value={formData.weight}
+              onChange={handleChange}
+              placeholder="Ağırlık"
+              className="p-3 w-full bg-gray-700 border border-gray-600 rounded-lg"
+            />
 
-              <div className="space-y-3">
-                <input name="link1" value={formData.link1} onChange={handleChange} placeholder="Link 1" className="w-full bg-gray-700 border border-gray-600 rounded-lg p-2 text-sm" />
-                <input name="link2" value={formData.link2} onChange={handleChange} placeholder="Link 2" className="w-full bg-gray-700 border border-gray-600 rounded-lg p-2 text-sm" />
-                <input name="link3" value={formData.link3} onChange={handleChange} placeholder="Link 3" className="w-full bg-gray-700 border border-gray-600 rounded-lg p-2 text-sm" />
-              </div>
-            </div>
+            <input
+              name="dimensions"
+              value={formData.dimensions}
+              onChange={handleChange}
+              placeholder="Boyut"
+              className="p-3 w-full bg-gray-700 border border-gray-600 rounded-lg"
+            />
 
-            {/* Resim */}
-            <div className="bg-gray-750 p-4 rounded-lg border border-gray-600 border-dashed">
-              <label className="block text-sm text-gray-400 mb-2">Ürün Resimleri (Maksimum 4)</label>
+            {/* LINKLER */}
+            <input
+              name="link1"
+              value={formData.link1}
+              onChange={handleChange}
+              placeholder="Link 1"
+              className="p-2 w-full bg-gray-700 border border-gray-600 rounded-lg text-sm"
+            />
+            <input
+              name="link2"
+              value={formData.link2}
+              onChange={handleChange}
+              placeholder="Link 2"
+              className="p-2 w-full bg-gray-700 border border-gray-600 rounded-lg text-sm"
+            />
+            <input
+              name="link3"
+              value={formData.link3}
+              onChange={handleChange}
+              placeholder="Link 3"
+              className="p-2 w-full bg-gray-700 border border-gray-600 rounded-lg text-sm"
+            />
 
-              <div className="flex gap-4 items-center flex-wrap">
-                <label className="cursor-pointer flex flex-col items-center justify-center w-20 h-20 bg-gray-700 hover:bg-gray-600 rounded-lg border border-gray-500 transition">
-                  <Upload size={20} className="text-gray-300" />
-                  <span className="text-[10px] text-gray-400 mt-1">Yükle</span>
-                  <input type="file" multiple accept="image/*" className="hidden" onChange={handleFileChange} />
-                </label>
+            {/* OLD IMAGES */}
+            {isEdit && formData.imageUrls.length > 0 && (
+              <div className="flex flex-wrap gap-4">
+                {formData.imageUrls.map((url) => (
+                  <div key={url} className="relative w-20 h-20">
+                    <img
+                      src={`${api.baseUrl}${url}`}
+                      className="w-full h-full rounded-lg object-cover border border-gray-600"
+                    />
 
-                {imagePreviews.map((src, index) => (
-                  <div key={index} className="relative w-20 h-20 group">
-                    <img src={src} className="w-full h-full object-cover rounded-lg border border-gray-600" />
                     <button
                       type="button"
-                      onClick={() => removeImage(index)}
-                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition"
+                      onClick={() => removeOldImage(url)}
+                      className="absolute -top-2 -right-2 bg-red-600 rounded-full p-1"
                     >
-                      <X size={12} />
+                      <X size={14} />
                     </button>
                   </div>
                 ))}
               </div>
+            )}
+
+            {/* NEW IMAGES */}
+            <div className="flex gap-4 flex-wrap">
+              <label className="cursor-pointer w-20 h-20 flex flex-col justify-center items-center border border-gray-500 bg-gray-700 rounded-lg">
+                <Upload size={20} />
+                <input type="file" className="hidden" multiple onChange={handleFileChange} />
+              </label>
+
+              {imagePreviews.map((src, i) => (
+                <div key={i} className="relative w-20 h-20">
+                  <img src={src} className="w-full h-full rounded-lg border border-gray-600" />
+                  <button
+                    type="button"
+                    onClick={() => removeNewImage(i)}
+                    className="absolute -top-2 -right-2 bg-red-600 rounded-full p-1"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* KAYDET */}
-          <div className="lg:col-span-2 pt-4">
+          {/* SUBMIT BUTTON */}
+          <div className="lg:col-span-2">
             <button
-              disabled={loading}
               type="submit"
-              className="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-bold py-4 rounded-xl shadow-lg flex items-center justify-center gap-2 transition disabled:opacity-50"
+              className="w-full bg-blue-600 hover:bg-blue-700 p-4 rounded-xl flex items-center justify-center gap-2"
             >
-              {loading ? "İşleniyor..." : <><Save size={20} /> Ürünü ve Resimleri Kaydet</>}
+              <Save size={20} />
+              {isEdit ? "Ürünü Güncelle" : "Ürünü Kaydet"}
             </button>
           </div>
         </form>
       </div>
 
-      {/* ÜRÜN LİSTESİ */}
+      {/* --------------------- PRODUCT LIST --------------------- */}
       <div className="bg-gray-800 p-6 rounded-xl shadow-xl border border-gray-700">
-        <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 text-white">
-          Kayıtlı Ürünler
-          <span className="text-sm bg-gray-700 px-2 py-1 rounded-full text-gray-300">
-            {products.length}
-          </span>
-        </h2>
+        <h2 className="text-xl font-semibold mb-6">Kayıtlı Ürünler</h2>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="text-gray-400 border-b border-gray-700 text-sm uppercase">
-                <th className="p-4">Görsel</th>
-                <th className="p-4">Ürün Adı</th>
-                <th className="p-4">Kategori</th>
-                <th className="p-4">Fiyat</th>
-                <th className="p-4">Detaylar</th>
-                <th className="p-4 text-right">İşlem</th>
+        <table className="w-full">
+          <thead className="text-gray-400 text-sm border-b border-gray-700">
+            <tr>
+              <th className="p-4">Görsel</th>
+              <th className="p-4">Ad</th>
+              <th className="p-4">Kategori</th>
+              <th className="p-4">Fiyat</th>
+              <th className="p-4">İşlem</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {products.map((p) => (
+              <tr key={p.id} className="border-b border-gray-700 hover:bg-gray-750">
+                <td className="p-4">
+                  {p.imageUrls?.length > 0 ? (
+                    <img
+                      src={`${api.baseUrl}${p.imageUrls[0]}`}
+                      className="w-16 h-16 rounded-lg object-cover"
+                    />
+                  ) : (
+                    <div className="w-16 h-16 bg-gray-700 rounded-lg flex items-center justify-center text-xs">
+                      Yok
+                    </div>
+                  )}
+                </td>
+
+                <td className="p-4">{p.name}</td>
+                <td className="p-4">{p.categoryName}</td>
+                <td className="p-4 text-green-400 font-bold">{p.price} ₺</td>
+
+                <td className="p-4 flex gap-3">
+                  <button
+                    onClick={() => selectProduct(p)}
+                    className="bg-yellow-600 p-2 rounded-lg hover:bg-yellow-700"
+                  >
+                    <Edit size={18} />
+                  </button>
+
+                  <button
+                    onClick={() => handleDelete(p.id)}
+                    className="bg-red-600 p-2 rounded-lg hover:bg-red-700"
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                </td>
               </tr>
-            </thead>
-
-            <tbody>
-              {products.length === 0 ? (
-                <tr><td colSpan={6} className="p-8 text-center text-gray-500 italic">Henüz ürün eklenmemiş.</td></tr>
-              ) : (
-                products.map((product) => (
-                  <tr key={product.id} className="border-b border-gray-700 hover:bg-gray-750 transition">
-                    <td className="p-4">
-                      {product.imageUrls?.length > 0 ? (
-                        <img
-                          src={`${api.baseUrl}${product.imageUrls[0]}`}
-                          className="w-16 h-16 object-cover rounded-lg border border-gray-600"
-                        />
-                      ) : (
-                        <div className="w-16 h-16 bg-gray-700 rounded-lg flex items-center justify-center text-xs text-gray-500">
-                          Resim Yok
-                        </div>
-                      )}
-                    </td>
-
-                    <td className="p-4 font-semibold text-white">{product.name}</td>
-
-                    <td className="p-4 text-sm text-gray-300 bg-gray-700/30 rounded inline-block my-4 mx-4">
-                      {product.categoryName}
-                    </td>
-
-                    <td className="p-4 text-green-400 font-mono font-bold">{product.price} ₺</td>
-
-                    <td className="p-4 text-xs text-gray-400 space-y-1">
-                      {product.color && <div>Renk: {product.color}</div>}
-                      {product.weight && <div>Ağırlık: {product.weight}</div>}
-                    </td>
-
-                    <td className="p-4 text-right">
-                      <button
-                        onClick={() => handleDelete(product.id)}
-                        className="bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white p-3 rounded-lg transition"
-                      >
-                        <Trash2 size={18} />
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

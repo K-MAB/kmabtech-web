@@ -24,7 +24,6 @@ export function Header() {
     { href: "/products", label: "KMAB3D" },
     { href: "/blog", label: "Blog" },
     { href: "/contact", label: "İletişim" },
-    { href: "/admin/dashboard", label: "Admin" },
   ];
 
   return (
