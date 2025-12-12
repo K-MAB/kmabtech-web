@@ -71,16 +71,7 @@ export function Header() {
         <div className="flex items-center gap-3">
 
           {/* THEME TOGGLE BUTTON */}
-          <button
-            onClick={toggleTheme}
-            className={`
-              p-2 rounded-full transition
-              ${theme === "dark" ? "text-white hover:bg-white/10" : "text-gray-900 hover:bg-gray-200"}
-            `}
-          >
-            {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
-          </button>
-
+         
           {/* MOBILE MENU BUTTON */}
           <button
             className={`
