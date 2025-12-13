@@ -90,9 +90,9 @@ export default function ContactPage() {
           </p>
 
           <div className="space-y-6">
-            <ContactItem icon={<Mail />} title="E-posta" value="info@kmabtech.com" />
+            <ContactItem icon={<Mail />} title="E-posta" value="kmabsoft@gmail.com" />
             <ContactItem icon={<Phone />} title="Telefon" value="+90 (555) 076 20 61" />
-            <ContactItem icon={<MapPin />} title="Ofis" value="Teknopark İstanbul, Türkiye" />
+            <ContactItem icon={<MapPin />} title="Ofis" value="Yenimahalle Ankara, Türkiye" />
           </div>
         </motion.div>
 
@@ -138,7 +138,7 @@ export default function ContactPage() {
                     <InputGroup 
                       label="Adınız Soyadınız" 
                       name="name" 
-                      placeholder="yücel kandaş"
+                      placeholder="yücel karagöz"
                       value={formData.name}
                       onChange={handleChange}
                     />
