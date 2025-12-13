@@ -16,14 +16,15 @@ function normalizeUrl(url?: string) {
 /* ==========================================================
    📌 ANA SAYFA — PRODUCT DETAIL PAGE (MODERN AESTHETIC - CTA TAŞINDI)
 ========================================================== */
-export default function ProductDetailPage({ params }: { params: { id: string } }) {
+export default function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const [product, setProduct] = useState<any>(null);
   const [selected, setSelected] = useState<string | null>(null);
   const [hover, setHover] = useState(false);
 
-  useEffect(() => {
-    api.getProductById(id).then((data) => {
+useEffect(() => {
+    // Number(id) diyerek string olan id'yi sayıya çeviriyoruz
+    api.getProductById(Number(id)).then((data) => {
       setProduct(data);
       if (data.imageUrls?.length > 0) {
         setSelected(`${api.baseUrl}${data.imageUrls[0]}`);
