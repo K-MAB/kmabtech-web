@@ -14,7 +14,7 @@ function normalizeUrl(url?: string) {
 }
 
 /* ==========================================================
-   📌 ANA SAYFA — PRODUCT DETAIL PAGE (MODERN AESTHETIC - CTA TAŞINDI)
+   📌 ANA SAYFA — PRODUCT DETAIL PAGE (MODERN AESTHETIC - CTA TAŞINDI)
 ========================================================== */
 export default function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -22,7 +22,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   const [selected, setSelected] = useState<string | null>(null);
   const [hover, setHover] = useState(false);
 
-useEffect(() => {
+  useEffect(() => {
     // Number(id) diyerek string olan id'yi sayıya çeviriyoruz
     api.getProductById(Number(id)).then((data) => {
       setProduct(data);
@@ -32,17 +32,19 @@ useEffect(() => {
     });
   }, [id]);
 
+  // ✅ DÜZELTME: useMemo buraya (if bloğunun üzerine) taşındı.
+  // product null olabileceği için 'product?.imageUrls' şeklinde güvenli erişim kullanıldı.
+  const images = useMemo(() => 
+    product?.imageUrls?.map((x: string) => `${api.baseUrl}${x}`) || []
+  , [product]);
+
   // Product yüklenene kadar gösterilecek yükleme ekranı
+  // Bu return ifadesi artık useMemo'dan sonra çalışıyor.
   if (!product) return (
     <div className="min-h-screen flex items-center justify-center bg-[#050616] text-white">
       <div className="animate-pulse text-2xl font-mono text-cyan-400">YÜKLENİYOR...</div>
     </div>
   );
-
-  // Görüntü URL'lerini hesaplama
-  const images = useMemo(() => 
-    product.imageUrls?.map((x: string) => `${api.baseUrl}${x}`) || []
-  , [product.imageUrls]);
 
   const currentImage = selected || images[0] || "/placeholder.jpg"; 
 
@@ -155,7 +157,7 @@ useEffect(() => {
               </h1>
 
               <div className="text-5xl font-black mt-8 text-transparent bg-clip-text 
-                            bg-gradient-to-r from-cyan-400 to-blue-500 animate-pulse-slow">
+                           bg-gradient-to-r from-cyan-400 to-blue-500 animate-pulse-slow">
                 {product.price}
                 <span className="text-3xl font-bold text-gray-400 ml-2"> ₺</span>
               </div>
@@ -226,7 +228,7 @@ useEffect(() => {
 }
 
 /* ==========================================================
-   📌 SPEC COMPONENT
+   📌 SPEC COMPONENT
 ========================================================== */
 type SpecProps = {
   title: string;
