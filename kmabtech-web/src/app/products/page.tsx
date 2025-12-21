@@ -4,215 +4,145 @@ import { useState, useEffect, useMemo } from "react";
 import { api } from "@/services/api";
 import ProductCard from "@/components/ProductCard";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, SlidersHorizontal, RotateCcw } from "lucide-react";
-
-/* ✅ ProductCard ile %100 uyumlu hale getirildi */
-interface Product {
-  id: string | number;
-  name: string;                 // ✅ ARTIK ZORUNLU
-  description?: string;
-  price: number;
-  categoryName?: string;
-  color?: string;
-  imageUrls: string[];
-}
-
-interface Category {
-  id: number;
-  name: string;
-  color: string;
-}
+import { Search, ChevronLeft, ChevronRight, Filter, RotateCcw } from "lucide-react";
 
 export default function ProductsPage() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [products, setProducts] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [selectedColor, setSelectedColor] = useState("all");
   const [loading, setLoading] = useState(true);
+  const [isFilterOpen, setIsFilterOpen] = useState(true);
 
-  /* ✅ VERİLERİ ÇEK */
   useEffect(() => {
-    api.getProducts().then((data: Product[]) => {
-      setProducts(data || []);
+    Promise.all([
+      api.getProducts(),
+      fetch(`${api.baseUrl}/api/Categories`).then(res => res.json())
+    ]).then(([prodData, catData]) => {
+      setProducts(prodData || []);
+      setCategories(catData || []);
       setLoading(false);
     });
-
-    fetch(`${api.baseUrl}/api/Categories`)
-      .then((res) => res.json())
-      .then((data) => setCategories(data || []));
   }, []);
 
-  /* ✅ RENKLER */
-  const colors = useMemo(() => {
-    return [
-      "all",
-      ...Array.from(
-        new Set(products.map((p) => p.color).filter(Boolean) as string[])
-      ),
-    ];
-  }, [products]);
-
-  /* ✅ FİLTRELEME */
   const filteredProducts = useMemo(() => {
     return products.filter((p) => {
-      const name = p.name.toLowerCase();
-      const searchText = search.toLowerCase();
-
-      const matchesSearch =
-        searchText === "" || name.includes(searchText);
-
-      const matchesCategory =
-        selectedCategory === "all" ||
-        p.categoryName === selectedCategory;
-
-      const matchesColor =
-        selectedColor === "all" || p.color === selectedColor;
-
-      return matchesSearch && matchesCategory && matchesColor;
+      const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase());
+      const matchesCategory = selectedCategory === "all" || p.categoryName === selectedCategory;
+      return matchesSearch && matchesCategory;
     });
-  }, [products, search, selectedCategory, selectedColor]);
-
-  const resetFilters = () => {
-    setSearch("");
-    setSelectedCategory("all");
-    setSelectedColor("all");
-  };
+  }, [products, search, selectedCategory]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#050816] to-[#070B1A] text-white">
-
-      {/* ================= HERO ================= */}
-      <section className="pt-28 pb-20 text-center relative">
-        <h1 className="text-5xl font-extrabold bg-gradient-to-r from-cyan-400 to-blue-600 text-transparent bg-clip-text mb-6">
-          KMAB-3D
-        </h1>
-
-        <p className="text-gray-400 mb-8 text-lg">
-          3D baskı, teknoloji ve yazılım ürünleri
-        </p>
-
-        <div className="relative max-w-xl mx-auto">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400" />
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Ürün ara..."
-            className="w-full bg-[#0E132B] border border-cyan-500/30 rounded-xl py-3 pl-12 pr-4 outline-none focus:ring-2 focus:ring-cyan-500 shadow-lg"
-          />
-        </div>
-      </section>
-
-      {/* ================= ANA ALAN ================= */}
-      <main className="w-10xl px-20 pb-40 md:flex gap-20">
-
-        {/* ✅ FİLTRE */}
-        <aside className="hidden md:block w-72 flex-shrink-0">
-          <div className="sticky top-32 p-6 rounded-2xl bg-[#0f172a]/90 border border-cyan-500/20 space-y-6">
-
-            <h2 className="text-xl font-bold text-cyan-300 flex gap-2">
-              <SlidersHorizontal /> Gelişmiş Filtreler
-            </h2>
-
-            <button
-              onClick={resetFilters}
-              className="w-full py-2 rounded-xl flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-pink-600"
-            >
-              <RotateCcw size={18} /> Sıfırla
-            </button>
-
-            <CategoryFilter
-              categories={categories}
-              selectedCategory={selectedCategory}
-              setSelectedCategory={setSelectedCategory}
-            />
-
-            <ColorFilter
-              colors={colors}
-              selectedColor={selectedColor}
-              setSelectedColor={setSelectedColor}
-            />
+    <div className="min-h-screen bg-[#05060B] text-white flex overflow-hidden">
+      
+      {/* ================= SIDEBAR (COLLAPSIBLE) ================= */}
+      <motion.aside
+        initial={false}
+        animate={{ width: isFilterOpen ? 350 : 0, opacity: isFilterOpen ? 1 : 0 }}
+        className="relative bg-[#0A0C14] border-r border-white/5 h-screen overflow-hidden shrink-0 hidden lg:block"
+      >
+        <div className="p-10 w-[350px] space-y-10">
+          <div className="flex items-center gap-3 text-blue-500 mb-10">
+            <Filter size={24} />
+            <h2 className="text-xl font-black tracking-widest">FİLTRELER</h2>
           </div>
-        </aside>
 
-        {/* ✅ ÜRÜN KARTLARI */}
-        <section className="flex-1">
+          {/* Search inside Sidebar */}
+          <div className="space-y-4">
+            <label className="text-[10px] font-bold text-gray-500 tracking-[0.2em] uppercase">Ürün Arama</label>
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600" size={18} />
+              <input 
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-4 outline-none focus:border-blue-600 transition-all"
+                placeholder="Model ismi..."
+              />
+            </div>
+          </div>
+
+          {/* Categories */}
+          <div className="space-y-4">
+            <label className="text-[10px] font-bold text-gray-500 tracking-[0.2em] uppercase">Kategoriler</label>
+            <div className="flex flex-col gap-2">
+              <button 
+                onClick={() => setSelectedCategory("all")}
+                className={`text-left px-5 py-4 rounded-xl font-bold transition-all ${selectedCategory === "all" ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20" : "hover:bg-white/5 text-gray-400"}`}
+              >
+                Tüm Koleksiyon
+              </button>
+              {categories.map((cat) => (
+                <button 
+                  key={cat.id}
+                  onClick={() => setSelectedCategory(cat.name)}
+                  className={`text-left px-5 py-4 rounded-xl font-bold transition-all ${selectedCategory === cat.name ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20" : "hover:bg-white/5 text-gray-400"}`}
+                >
+                  {cat.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <button 
+            onClick={() => {setSearch(""); setSelectedCategory("all");}}
+            className="flex items-center gap-2 text-gray-500 hover:text-white text-xs font-bold transition-colors pt-10"
+          >
+            <RotateCcw size={14} /> FİLTRELERİ SIFIRLA
+          </button>
+        </div>
+      </motion.aside>
+
+      {/* ================= MAIN CONTENT ================= */}
+      <main className="flex-1 h-screen overflow-y-auto relative scrollbar-hide">
+        
+        {/* Toggle Button */}
+        <button
+          onClick={() => setIsFilterOpen(!isFilterOpen)}
+          className="fixed left-4 bottom-4 z-50 bg-blue-600 w-14 h-14 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform"
+        >
+          {isFilterOpen ? <ChevronLeft size={28} /> : <ChevronRight size={28} />}
+        </button>
+
+        {/* Header */}
+        <section className="pt-32 pb-16 px-10 text-center">
+        
+          <div className="relative z-10">
+            <h2 className="text-5xl font-black mb-4">KMAB <span className="text-blue-600">3D</span></h2>
+            <p className="text-gray-500 font-medium tracking-[0.2em] uppercase text-xs">Toplam {filteredProducts.length} adet sonuç listelendi</p>
+          </div>
+        </section>
+
+        {/* Grid Container */}
+        <div className="px-10 pb-40">
           {loading ? (
-            <div className="flex justify-center py-20">
-              <div className="w-16 h-16 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin" />
+            <div className="flex justify-center py-40">
+              <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
             </div>
           ) : (
-            <motion.div
+            <motion.div 
               layout
-              className="grid grid-cols-1 lg:grid-cols-5 gap-10"
+              className="grid grid-cols-[repeat(auto-fill,minmax(380px,1fr))] gap-12 justify-items-center items-stretch"
             >
-              <AnimatePresence>
+              <AnimatePresence mode="popLayout">
                 {filteredProducts.map((product) => (
                   <motion.div
                     key={product.id}
                     layout
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0 }}
-                    className="rounded-2xl shadow-[0_0_35px_rgba(56,189,248,0.25)]"
+                    transition={{ duration: 0.4 }}
+                    className="flex" // Kartın yüksekliğini eşitlemek için zorunlu
                   >
-                    {/* ✅ HATA ARTIK %100 YOK */}
                     <ProductCard product={product} />
                   </motion.div>
                 ))}
               </AnimatePresence>
             </motion.div>
           )}
-        </section>
-
+        </div>
       </main>
     </div>
   );
 }
-
-/* ================= FİLTRE BİLEŞENLERİ ================= */
-
-const CategoryFilter = ({ categories, selectedCategory, setSelectedCategory }: any) => (
-  <div>
-    <h3 className="text-cyan-400 mb-3 font-semibold">Kategoriler</h3>
-    <div className="flex flex-wrap gap-2">
-      <button
-        onClick={() => setSelectedCategory("all")}
-        className={`px-4 py-1 rounded-full ${
-          selectedCategory === "all" ? "bg-cyan-600" : "bg-slate-700"
-        }`}
-      >
-        Tümü
-      </button>
-      {categories.map((cat: any) => (
-        <button
-          key={cat.id}
-          onClick={() => setSelectedCategory(cat.name)}
-          style={{ backgroundColor: cat.color }}
-          className="px-4 py-1 rounded-full text-white"
-        >
-          {cat.name}
-        </button>
-      ))}
-    </div>
-  </div>
-);
-
-const ColorFilter = ({ colors, selectedColor, setSelectedColor }: any) => (
-  <div>
-    <h3 className="text-cyan-400 mb-3 font-semibold">Renk</h3>
-    <div className="flex flex-wrap gap-2">
-      {colors.map((color: string) => (
-        <button
-          key={color}
-          onClick={() => setSelectedColor(color)}
-          className={`px-4 py-1 rounded-full ${
-            selectedColor === color ? "bg-cyan-600" : "bg-slate-700"
-          }`}
-        >
-          {color === "all" ? "Tümü" : color}
-        </button>
-      ))}
-    </div>
-  </div>
-);
