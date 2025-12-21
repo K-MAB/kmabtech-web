@@ -24,7 +24,7 @@ export default function ProductCard({ product }: { product: Product }) {
         className="group relative flex flex-col h-full w-[380px] bg-[#0F121D] border border-white/5 rounded-[2rem] overflow-hidden transition-all duration-500 hover:border-blue-500/50 hover:shadow-[0_0_40px_rgba(59,130,246,0.25)]"
       >
         {/* --- IMAGE AREA (380x480) --- */}
-        <div className="relative w-full h-[480px] flex-shrink-0 overflow-hidden bg-black">
+        <div className="relative w-full h-[400px] flex-shrink-0 overflow-hidden bg-black">
           {/* Flare Efekti (Işık Süzmesi) */}
           <div className="absolute inset-0 z-20 pointer-events-none">
             <motion.div 
