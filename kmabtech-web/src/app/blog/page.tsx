@@ -58,7 +58,7 @@ export default function BlogPage() {
         </motion.h1>
 
         <p className="text-gray-400 text-lg mb-10">
-          Yazılım, teknoloji, geliştirme süreçleri ve KMABTECH haberleri.
+          Yazılım, teknoloji, geliştirme süreçleri ve Commitra haberleri.
         </p>
 
         {/* Arama Kutusu */}

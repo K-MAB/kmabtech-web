@@ -39,7 +39,7 @@ export default function ServicesPage() {
           Hizmetlerimiz
         </h1>
         <p className="text-gray-400 mt-4 text-lg">
-          {"<KMABTech />"}
+          {"<Commitra />"}
         </p>
       </div>
 

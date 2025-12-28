@@ -35,7 +35,7 @@ export default function Footer() {
                         <Link href="/" className="flex items-center gap-2">
                             <img
                                 src="/logo.png"
-                                alt="KMABTech Logo"
+                                alt="Commitra Logo"
                                 className="h-30 w-auto"
                             />
                             </Link>
@@ -69,7 +69,7 @@ export default function Footer() {
                 {/* Alt Kısım (Copyright) */}
                 <div className="mt-10 pt-6 border-t border-gray-200 dark:border-gray-800 text-center">
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                        &copy; {currentYear} KMABTech. Tüm hakları saklıdır.
+                        &copy; {currentYear} Commitra. Tüm hakları saklıdır.
                     </p>
                 </div>
             </div>

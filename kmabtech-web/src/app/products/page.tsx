@@ -108,7 +108,7 @@ export default function ProductsPage() {
         <section className="pt-32 pb-16 px-10 text-center">
         
           <div className="relative z-10">
-            <h2 className="text-5xl font-black mb-4">KMAB <span className="text-blue-600">3D</span></h2>
+            <h2 className="text-5xl font-black mb-4">Commitra <span className="text-blue-600">3D</span></h2>
             <p className="text-gray-500 font-medium tracking-[0.2em] uppercase text-xs">Toplam {filteredProducts.length} adet sonuç listelendi</p>
           </div>
         </section>

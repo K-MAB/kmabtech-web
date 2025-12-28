@@ -21,7 +21,7 @@ export function Header() {
   const navItems = [
     { href: "/", label: "Anasayfa" },
     { href: "/services", label: "Hizmetler" },
-    { href: "/products", label: "KMAB3D" },
+    { href: "/products", label: "Commitra3D" },
     { href: "/blog", label: "Blog" },
     { href: "/contact", label: "İletişim" },
   ];
@@ -48,8 +48,8 @@ export function Header() {
         <Link href="/" className="flex items-center gap-2">
           <img
             src="/logo.png"
-            alt="KMABTech Logo"
-            className="h-30 w-auto"
+            alt="Commitra Logo"
+            className="h-15 w-auto"
           />
         </Link>
 

@@ -90,7 +90,7 @@ export default function ContactPage() {
           </p>
 
           <div className="space-y-6">
-            <ContactItem icon={<Mail />} title="E-posta" value="kmabsoft@gmail.com" />
+            <ContactItem icon={<Mail />} title="E-posta" value="commitrasoft@gmail.com" />
             <ContactItem icon={<Phone />} title="Telefon" value="+90 (555) 076 20 61" />
           </div>
         </motion.div>

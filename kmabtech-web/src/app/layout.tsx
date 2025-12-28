@@ -13,17 +13,18 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: {
-    default: "KMABTech | Yapay Zeka & 3D Baskı Figür Teknolojileri",
-    template: "%s | KMABTech",
+    default: "COMMİTRA |Web Geliştirme Yapay Zeka & 3D Baskı Figür Teknolojileri",
+    template: "%s | COMMİTRA",
   },
   description:
-    "KMABTech ve KMAB3D ile yapay zeka destekli 3D baskı figür üretimi, özel tasarım modeller ve kurumsal yazılım çözümleri.",
+    "COMMİTRA ve COMMİTRA3D ile yapay zeka destekli 3D baskı figür üretimi, özel tasarım modeller ve kurumsal yazılım çözümleri.",
   keywords: [
-    "kmabtech",
-    "kmab3d",
+    "commitra",
+    "commitra3d",
     "3d baskı figür",
     "yapay zeka 3d baskı",
     "özel tasarım 3d figür",
+    "web geliştirme",
     "3d yazıcı figür",
     "kişiye özel 3d baskı",
     "kurumsal yazılım",
@@ -32,17 +33,17 @@ export const metadata: Metadata = {
     "next.js",
     "asp.net core",
   ],
-  authors: [{ name: "KMABTech" }],
-  creator: "KMABTech",
-  publisher: "KMABTech",
-  metadataBase: new URL("https://www.kmabtech.com"),
+  authors: [{ name: "COMMİTRA" }],
+  creator: "COMMİTRA",
+  publisher: "COMMİTRA",
+  metadataBase: new URL("https://www.comitrasoft.com"),
 
   openGraph: {
-    title: "KMABTech | Yapay Zeka & 3D Baskı Figür",
+    title: "Commitra | Web Geliştirme Yapay Zeka & 3D Baskı Figür",
     description:
       "Yapay zeka destekli 3D baskı figürler, özel üretim modeller ve ileri teknoloji çözümleri.",
-    url: "https://www.kmabtech.com",
-    siteName: "KMABTech",
+    url: "https://www.commitrasoft.com",
+    siteName: "COMMİTRA",
     locale: "tr_TR",
     type: "website",
     images: [
@@ -50,16 +51,16 @@ export const metadata: Metadata = {
         url: "/og-image.jpg", // 1200x630 önerilir
         width: 1200,
         height: 630,
-        alt: "KMABTech Yapay Zeka ve 3D Baskı Figür",
+        alt: "Commitra Web Geliştirme Yapay Zeka ve 3D Baskı Figür",
       },
     ],
   },
 
   twitter: {
     card: "summary_large_image",
-    title: "KMABTech | Yapay Zeka & 3D Baskı Figür",
+    title: "Commitra |Web Geliştirme Yapay Zeka & 3D Baskı Figür",
     description:
-      "KMABTech & KMAB3D ile yapay zeka destekli 3D baskı figür çözümleri.",
+      "Commitra & Commitra3D ile yapay zeka destekli 3D baskı figür çözümleri.",
     images: ["/og-image.jpg"],
   },
 

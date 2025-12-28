@@ -194,7 +194,7 @@ export default function AdminReferencesPage() {
                 onChange={handleChange}
                 required
                 className="w-full bg-gray-700 p-3 rounded-lg border border-gray-600 outline-none focus:border-blue-500 transition"
-                placeholder="Örn: Kmabtech Yazılım A.Ş."
+                placeholder="Örn: Commitra Yazılım A.Ş."
               />
             </div>
 

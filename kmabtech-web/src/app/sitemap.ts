@@ -1,14 +1,14 @@
 import { MetadataRoute } from "next";
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://www.kmabtech.com";
+const baseUrl = "https://commitrasoft.com";
 
+export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
       url: `${baseUrl}/`,
       lastModified: new Date(),
       changeFrequency: "weekly",
-      priority: 1,
+      priority: 1.0,
     },
     {
       url: `${baseUrl}/products`,

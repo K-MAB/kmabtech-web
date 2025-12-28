@@ -11,7 +11,7 @@ export default function Cube() {
         <div className="face right">AI</div>
         <div className="face left">UI</div>
         <div className="face top">CODE</div>
-        <div className="face bottom">KMAB</div>
+        <div className="face bottom">Commitra</div>
       </div>
     </div>
   );

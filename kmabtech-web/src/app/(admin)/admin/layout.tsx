@@ -50,7 +50,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
                 <div className="h-16 flex items-center justify-center border-b border-gray-700 shrink-0">
                     <h1 className="text-xl font-bold tracking-wider">
-                        KMAB<span className="text-blue-500">ADMIN</span>
+                        Commitra<span className="text-blue-500">ADMIN</span>
                     </h1>
                 </div>
 

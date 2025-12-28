@@ -63,8 +63,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     } else if (link.includes("trendyol")) {
         name = "TRENDYOL";
         colorClass = "text-orange-400";
-    } else if (link.includes("kmabtech")) {
-        name = "KMABTECH";
+    } else if (link.includes("commitra")) {
+        name = "COMMİTRA";
         colorClass = "text-yellow-400";
     }
 
@@ -74,7 +74,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   return (
     <div className="min-h-screen bg-[#050616] text-gray-100 pt-16 pb-28 font-sans overflow-x-hidden">
       
-      {/* 🔹 TAM EKRAN RESİM MODAL (Lightbox) */}
       <AnimatePresence>
         {isZoomed && (
           <motion.div 
