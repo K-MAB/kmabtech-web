@@ -4,7 +4,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "api.kmabtech.com",
+        hostname: "api.commitrasoft.com",
         pathname: "/uploads/**",
       },
     ],
@@ -12,4 +12,3 @@ const nextConfig = {
 };
 
 module.exports = nextConfig;
-
