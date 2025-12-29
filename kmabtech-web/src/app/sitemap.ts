@@ -1,6 +1,5 @@
 import { MetadataRoute } from "next";
-
-const baseUrl = "https://commitrasoft.com";
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
