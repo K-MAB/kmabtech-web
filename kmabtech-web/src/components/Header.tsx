@@ -27,20 +27,19 @@ export function Header() {
   ];
 
   return (
-    <header
-      className={`
-        sticky top-0 z-50 w-full backdrop-blur-md transition-all duration-700
-        ${isScrolled ? "shadow-lg border-b border-white/10" : ""}
-        ${theme === "dark" ? "bg-black/70" : "bg-white/70"}
-      `}
-      style={{
-        background: !isScrolled
-          ? theme === "dark"
-            ? "radial-gradient(circle, rgba(0,0,48,0.65) 0%, rgba(0,0,84,0.65) 66%, rgba(3,41,43,0.65) 100%)"
-            : "radial-gradient(circle, rgba(255,255,255,0.80) 0%, rgba(240,240,255,0.80) 66%, rgba(220,230,255,0.80) 100%)"
-          : undefined,
-      }}
-    >
+ <header
+  className={`
+    sticky top-0 z-50 w-full backdrop-blur-md transition-all duration-700
+    ${isScrolled ? "shadow-lg border-b border-white/10" : ""}
+  `}
+  style={{
+    background: isScrolled
+      ? "radial-gradient(circle, rgba(0,0,48,0.65) 0%, rgba(0,0,84,0.65) 66%, rgba(3,41,43,0.65) 100%)"
+      : "#050616",
+  }}
+>
+
+
       <div className="container mx-auto max-w-7xl h-16 flex items-center justify-between px-4 sm:px-6 lg:px-8">
 
         {/* LOGO */}
