@@ -3,8 +3,15 @@ import axios from "axios";
 // ===================================================
 // BASE URL (ENV'DEN OKUNUR)
 // ===================================================
+
 const BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.commitrasoft.com";
+=======
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE!;
+
+
+const API_URL = `${BASE_URL}/api`;
+
 
 // ===================================================
 // AXIOS INSTANCE
