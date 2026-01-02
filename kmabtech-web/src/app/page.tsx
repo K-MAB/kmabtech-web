@@ -6,6 +6,8 @@ import { Shield, Code, Server } from "lucide-react";
 import ServicesTabs from "@/components/ServicesTabs";
 import ReferencesCarousel from "@/components/ReferencesCarousel";
 import Footer from "@/components/Footer";
+import WorkFlowSection from "@/components/buisnessflow";
+
 import { AnimateInView } from "@/components/AnimateInView";
 import Cube from "@/components/cube";
 import ScrollingText from "@/components/CmdTerminal";
@@ -82,36 +84,7 @@ export default function HomePage() {
         </AnimateInView>
       </div>
 
-      <SectionDivider />
-
-      {/* ============ İŞ AKIŞI ============ */}
-      <div className="py-20 border-t border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/[0.02] backdrop-blur-sm">
-        <AnimateInView delay={0.2} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl font-bold mb-16 text-center text-black dark:text-white drop-shadow-lg">
-            İş Akışımız ve Farkımız
-          </h2>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            <InfoCard
-              title="Planlama ve Analiz"
-              description="Projenizi detaylı şekilde analiz ederiz."
-              icon={Shield}
-            />
-            <InfoCard
-              title="Geliştirme ve Entegrasyon"
-              description="Modern teknolojilerle gelişmiş arayüzler oluştururuz."
-              icon={Code}
-            />
-            <InfoCard
-              title="Dağıtım ve Destek"
-              description="Canlıya alma, optimizasyon ve güvenlik desteği sağlarız."
-              icon={Server}
-            />
-          </div>
-        </AnimateInView>
-      </div>
-
-      <SectionDivider />
+     <WorkFlowSection />
 
       {/* ============ REFERANSLAR ============ */}
       <div className="pt-10 pb-20">

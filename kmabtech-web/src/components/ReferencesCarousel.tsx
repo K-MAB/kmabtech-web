@@ -1,22 +1,31 @@
 "use client";
 
-import { useApi } from "@/lib/useApi";
-import { Reference } from "@/lib/types";
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import { api } from "@/services/api";
+import { Reference } from "@/lib/types";
 import { useTheme } from "@/components/Theme/ThemeProvider";
 
 export default function ReferencesCarousel() {
-  const { data: references } = useApi<Reference[]>("/References");
-  const { theme } = useTheme(); // ← THEME ALINDI
+  const { theme } = useTheme();
   const trackRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number | undefined>(undefined);
+
+  const [references, setReferences] = useState<Reference[]>([]);
   const [isPaused, setIsPaused] = useState(false);
 
   const SPEED = 1.2;
 
+  // 🔥 SADECE api.ts KULLANILIYOR
   useEffect(() => {
-    if (!trackRef.current || !references || isPaused) return;
+    api
+      .getReferences()
+      .then(setReferences)
+      .catch(console.error);
+  }, []);
+
+  useEffect(() => {
+    if (!trackRef.current || references.length === 0 || isPaused) return;
 
     const track = trackRef.current;
     let x = 0;
@@ -45,9 +54,9 @@ export default function ReferencesCarousel() {
     return () => cancelAnimationFrame(animationRef.current!);
   }, [references, isPaused]);
 
-  if (!references) return null;
+  if (!references || references.length === 0) return null;
 
-  // Çok akıcı akış için 6 kopya
+  // Akıcı döngü için kopyalar
   const items = [
     ...references,
     ...references,
@@ -58,7 +67,7 @@ export default function ReferencesCarousel() {
   ];
 
   /* ========================
-      TEMA'YA GÖRE RENK SETİ
+      TEMA'YA GÖRE RENKLER
   ========================= */
   const bgStart = theme === "dark" ? "#070b38" : "#f8f9ff";
   const bgMid   = theme === "dark" ? "#000a1f" : "#eef2ff";
@@ -100,11 +109,15 @@ export default function ReferencesCarousel() {
             >
               <div className="relative group">
                 <Image
-                  src={`${process.env.NEXT_PUBLIC_API_BASE_URL}${ref.logoUrl}`}
+                  src={
+                    ref.logoUrl.startsWith("http")
+                      ? ref.logoUrl
+                      : `${api.baseUrl}${ref.logoUrl}`
+                  }
                   alt={ref.companyName}
                   width={160}
                   height={80}
-                  className={`object-contain opacity-80 grayscale group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-300`}
+                  className="object-contain opacity-80 grayscale group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-300"
                 />
 
                 {/* Glow Hover */}
