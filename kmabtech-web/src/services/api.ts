@@ -30,10 +30,10 @@ apiClient.interceptors.request.use(
 );
 
 // ===================================================
-// API EXPORT
+// API EXPORT (TEK VE MERKEZİ)
 // ===================================================
 export const api = {
-  // 🔥 image path birleştirme için
+  // 🔥 Görsel path birleştirme için
   baseUrl: BASE_URL,
 
   // ====================== UPLOAD ======================
@@ -47,7 +47,7 @@ export const api = {
       },
     });
 
-    // backend { url: "/uploads/xxx.jpg" } dönüyorsa
+    // backend: { url: "/uploads/xxx.jpg" }
     return res.data.url;
   },
 
