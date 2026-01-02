@@ -4,7 +4,7 @@ import { useState, useEffect, use, useMemo } from "react";
 import { api } from "@/services/api";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-  ArrowLeftCircle, 
+  ArrowLeft, 
   Box, 
   Layers, 
   Ruler, 
@@ -13,11 +13,14 @@ import {
   Tag, 
   ShoppingCart, 
   X, 
-  Maximize2 
+  Maximize2,
+  CheckCircle2,
+  Share2
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
-/* 🔹 www ile gelen linkleri otomatik https yapar */
+/* Link Düzenleyici Helper */
 function normalizeUrl(url?: string) {
   if (!url) return "#";
   if (!url.startsWith("http")) return "https://" + url;
@@ -31,7 +34,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   const [isZoomed, setIsZoomed] = useState(false);
 
   useEffect(() => {
-    // Number(id) diyerek string olan id'yi sayıya çeviriyoruz
     api.getProductById(Number(id)).then((data) => {
       setProduct(data);
       if (data.imageUrls?.length > 0) {
@@ -45,103 +47,116 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   , [product]);
 
   if (!product) return (
-    <div className="min-h-screen flex items-center justify-center bg-[#050616] text-white">
-      <div className="animate-pulse text-2xl font-mono text-cyan-400 uppercase tracking-widest">Yükleniyor...</div>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#050505] text-white gap-4">
+       <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+       <div className="animate-pulse text-xs font-bold text-gray-500 uppercase tracking-[0.3em]">Veriler İşleniyor...</div>
     </div>
   );
 
   const currentImage = selected || images[0] || "/placeholder.jpg"; 
 
-  // Dinamik olarak link rengi ve metinlerini belirleyen yardımcı fonksiyon
-  const getLinkProps = (link: string) => {
-    let name = "Online Mağaza";
-    let colorClass = "text-blue-400"; // Varsayılan renk
-
-    if (link.includes("shopier")) {
-        name = "SHOPİER";
-        colorClass = "text-blue-400";
-    } else if (link.includes("trendyol")) {
-        name = "TRENDYOL";
-        colorClass = "text-orange-400";
-    } else if (link.includes("commitra")) {
-        name = "COMMİTRA";
-        colorClass = "text-yellow-400";
-    }
-
-    return { name, colorClass };
+  // Dinamik Link Stilleri
+  const getLinkStyle = (link: string) => {
+    if (link.includes("shopier")) return { name: "SHOPIER İLE AL", bg: "bg-blue-600", border: "border-blue-500", shadow: "shadow-blue-900/40" };
+    if (link.includes("trendyol")) return { name: "TRENDYOL'DA GÖR", bg: "bg-orange-600", border: "border-orange-500", shadow: "shadow-orange-900/40" };
+    return { name: "SATIN AL", bg: "bg-purple-600", border: "border-purple-500", shadow: "shadow-purple-900/40" };
   };
 
   return (
-    <div className="min-h-screen bg-[#050616] text-gray-100 pt-16 pb-28 font-sans overflow-x-hidden">
+    <div className="relative min-h-screen bg-[#050505] text-gray-100 font-sans selection:bg-blue-500/30 overflow-x-hidden">
       
+      {/* ARKA PLAN EFEKTLERİ */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+         <div className="absolute top-0 left-0 w-full h-full bg-[url('/grid.svg')] opacity-[0.03]" />
+         <div className="absolute top-[-10%] right-[-10%] w-[800px] h-[800px] bg-blue-600/10 rounded-full blur-[120px]" />
+         <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-purple-600/10 rounded-full blur-[120px]" />
+      </div>
+
+      {/* ZOOM MODAL */}
       <AnimatePresence>
         {isZoomed && (
           <motion.div 
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex items-center justify-center p-4 md:p-12 cursor-zoom-out"
+            className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-2xl flex items-center justify-center p-4 md:p-12 cursor-zoom-out"
             onClick={() => setIsZoomed(false)}
           >
             <motion.button 
-              className="absolute top-8 right-8 text-white/50 hover:text-white transition-colors"
+              className="absolute top-6 right-6 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white"
               onClick={() => setIsZoomed(false)}
             >
-              <X size={48} />
+              <X size={32} />
             </motion.button>
             <motion.img 
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               src={currentImage} 
-              className="max-w-full max-h-full object-contain rounded-lg shadow-2xl shadow-cyan-500/10"
+              className="max-w-full max-h-full object-contain rounded-xl shadow-2xl shadow-blue-500/10"
             />
           </motion.div>
         )}
       </AnimatePresence>
 
-      <div className="container mx-auto px-4 md:px-8 max-w-[1600px]">
+      <div className="relative z-10 container mx-auto px-4 py-12 md:py-20 max-w-[1400px]">
 
-        {/* 🔹 GERİ DÖN */}
-        <Link
-          href="/products"
-          className="flex items-center gap-2 text-cyan-400/60 hover:text-cyan-300 transition-all duration-300 mb-10 group"
-        >
-          <ArrowLeftCircle size={26} className="group-hover:-translate-x-1 transition-transform" />
-          <span className="text-sm tracking-[0.2em] font-bold uppercase">Ürün Listesine Dön</span>
-        </Link>
+        {/* HEADER: GERİ BUTONU VE KATEGORİ */}
+        <div className="flex items-center justify-between mb-12">
+           <Link
+             href="/products"
+             className="group flex items-center gap-3 px-5 py-2.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all text-sm font-bold text-gray-300"
+           >
+             <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
+             KOLEKSİYONA DÖN
+           </Link>
 
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-16 items-start">
+           <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold tracking-[0.2em] uppercase">
+              <Tag size={14} /> {product.categoryName || "Premium"}
+           </div>
+        </div>
 
-          {/* 🔹 SOL TARAF: DEV RESİM ALANI (7 Kolon) */}
-          <div className="xl:col-span-7 space-y-8">
-            <div 
-              className="relative h-[500px] md:h-[800px] w-full bg-black rounded-[3rem] overflow-hidden border border-white/5 shadow-2xl group cursor-zoom-in"
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-12 lg:gap-20">
+
+          {/* 🔹 SOL TARAF: GÖRSEL SAHNESİ (7 Kolon) */}
+          <div className="xl:col-span-7 flex flex-col gap-6">
+            
+            {/* Ana Görsel */}
+            <motion.div 
+              layoutId={`product-${product.id}`}
+              className="relative aspect-square md:aspect-[4/3] w-full rounded-[2.5rem] overflow-hidden border border-white/10 shadow-2xl bg-[#0A0C14] group cursor-zoom-in"
               onClick={() => setIsZoomed(true)}
             >
+              {/* Görsel Arka Işığı */}
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/60 z-10" />
+              
               <motion.img
                 key={currentImage} 
                 src={currentImage}
                 alt={product.name}
-                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-                initial={{ opacity: 0, scale: 1.1 }}
-                animate={{ opacity: 1, scale: 1 }}
+                className="absolute inset-0 w-full h-full object-cover md:object-contain transition-transform duration-700 group-hover:scale-105"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
               />
-              
-              <div className="absolute inset-0 bg-gradient-to-t from-[#050616] via-transparent to-transparent opacity-70" />
-              
-              <div className="absolute bottom-10 right-10 bg-white/10 backdrop-blur-xl p-5 rounded-full border border-white/20 opacity-0 group-hover:opacity-100 transition-all transform translate-y-4 group-hover:translate-y-0">
-                <Maximize2 size={28} className="text-white" />
-              </div>
-            </div>
 
-            {/* Galeri Thumbnails */}
+              {/* Hover İkonu */}
+              <div className="absolute top-6 right-6 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                 <div className="p-3 bg-black/50 backdrop-blur-md rounded-full border border-white/20 text-white">
+                    <Maximize2 size={24} />
+                 </div>
+              </div>
+            </motion.div>
+
+            {/* Thumbnails */}
             {images?.length > 1 && (
-              <div className="flex gap-5 overflow-x-auto pb-4 no-scrollbar">
+              <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
                 {images.map((imgUrl: string, idx: number) => (
                   <button 
                     key={idx} 
                     onClick={() => setSelected(imgUrl)}
-                    className={`relative min-w-[140px] h-28 rounded-[1.5rem] overflow-hidden transition-all duration-300 border-2 
-                      ${selected === imgUrl ? 'border-cyan-500 scale-105 shadow-xl shadow-cyan-500/20' : 'border-white/5 hover:border-white/20'}`}
+                    className={`relative flex-shrink-0 w-24 h-24 rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
+                      selected === imgUrl 
+                        ? 'border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.5)] scale-105' 
+                        : 'border-white/10 hover:border-white/30 grayscale hover:grayscale-0'
+                    }`}
                   >
                     <img src={imgUrl} className="w-full h-full object-cover" />
                   </button>
@@ -150,111 +165,76 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
             )}
           </div>
 
-
-          {/* 🔹 SAĞ TARAF: ÜRÜN BİLGİLERİ (5 Kolon) */}
-          <div className="xl:col-span-5 flex flex-col space-y-12">
+          {/* 🔹 SAĞ TARAF: BİLGİ VE KONTROL PANELİ (5 Kolon) */}
+          <div className="xl:col-span-5 flex flex-col">
             
-            <div className="space-y-6">
-              <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-bold tracking-[0.3em] uppercase">
-                <Tag size={16} /> {product.categoryName || "Premium Collection"}
-              </div>
-              
-<h1 className="text-4xl md:text-5xl font-black tracking-tighter leading-tight
-               bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500
-               drop-shadow-[0_0_15px_rgba(34,211,238,0.4)] transition-all duration-500">
-  {product.name}
-</h1>
-
-              <div className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-300 to-gray-600">
-                {product.price?.toLocaleString()}
-                <span className="text-3xl font-bold text-gray-500 ml-3 uppercase tracking-tighter">₺</span>
-              </div>
+            {/* Başlık Alanı */}
+            <div className="mb-8 pb-8 border-b border-white/5">
+               <h1 className="text-4xl md:text-6xl font-black tracking-tight text-white mb-4 leading-none">
+                 {product.name}
+               </h1>
+               <div className="flex items-center gap-6">
+                  <div className="text-3xl md:text-4xl font-light text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
+                    {product.price?.toLocaleString()} 
+                    <span className="text-xl ml-1 text-gray-500">₺</span>
+                  </div>
+                  <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-green-500/10 text-green-400 text-xs font-bold uppercase tracking-wider">
+                     <CheckCircle2 size={14} /> Stokta
+                  </div>
+               </div>
             </div>
 
-            {/* Teknik Özellikler Grid */}
-            <div className="grid grid-cols-2 gap-5">
-              <SpecBox title="Renk" value={product.color} icon={<Box size={22} />} />
-              <SpecBox title="Materyal" value={product.material} icon={<Layers size={22} />} />
-              <SpecBox title="Boyut" value={product.dimensions} icon={<Ruler size={22} />} />
-              <SpecBox title="Ağırlık" value={product.weight} icon={<Package size={22} />} />
+            {/* Açıklama */}
+            <div className="prose prose-invert prose-lg text-gray-400 leading-relaxed mb-10">
+               <p>{product.description || "Bu özel tasarım parça için detaylı açıklama yakında eklenecektir."}</p>
             </div>
 
-            {/* Kısa Özet */}
-            <div className="relative p-8 rounded-[2rem] bg-white/[0.02] border border-white/5 italic text-gray-400 text-lg leading-relaxed">
-               <span className="absolute -top-4 left-6 text-6xl text-cyan-500/20 font-serif">"</span>
-               {product.description?.slice(0, 160)}...
+            {/* Teknik Özellikler (Glass Cards) */}
+            <div className="grid grid-cols-2 gap-4 mb-10">
+              <SpecItem label="Materyal" value={product.material} icon={Layers} />
+              <SpecItem label="Boyutlar" value={product.dimensions} icon={Ruler} />
+              <SpecItem label="Renk" value={product.color} icon={Box} />
+              <SpecItem label="Ağırlık" value={product.weight} icon={Package} />
             </div>
+
+            {/* SATIN ALMA KARTI (Sticky-like feel) */}
+            <div className="mt-auto bg-gradient-to-br from-white/[0.03] to-white/[0.01] border border-white/10 p-6 rounded-[2rem] backdrop-blur-md">
+               <div className="flex items-center gap-3 mb-6 text-white/80">
+                  <ShoppingCart size={20} className="text-blue-500" />
+                  <span className="font-bold tracking-wide text-sm uppercase">Satın Alma Seçenekleri</span>
+               </div>
+
+               <div className="space-y-3">
+                 {[product.link1, product.link2, product.link3].filter(Boolean).map((link, index) => {
+                    const style = getLinkStyle(link);
+                    return (
+                      <a
+                        key={index}
+                        href={normalizeUrl(link)}
+                        target="_blank"
+                        className={`group relative flex items-center justify-between w-full p-4 rounded-xl border transition-all duration-300 overflow-hidden ${style.bg} ${style.border} ${style.shadow} hover:scale-[1.02] active:scale-[0.98]`}
+                      >
+                         <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent pointer-events-none" />
+                         
+                         <span className="relative z-10 font-bold text-white tracking-wider flex items-center gap-2">
+                           {style.name}
+                         </span>
+                         
+                         <div className="relative z-10 bg-white/20 p-2 rounded-lg text-white group-hover:bg-white group-hover:text-black transition-colors">
+                            <ExternalLink size={18} />
+                         </div>
+                      </a>
+                    );
+                 })}
+               </div>
+               
+               <div className="mt-6 flex items-center justify-center gap-2 text-xs text-gray-500 font-medium cursor-pointer hover:text-white transition-colors">
+                  <Share2 size={14} />
+                  <span>Bu ürünü paylaş</span>
+               </div>
+            </div>
+
           </div>
-        </div>
-
-        {/* 🔹 ALT KISIM: AÇIKLAMA VE YENİ SATIN ALMA KARTI */}
-        <div className="mt-24 grid grid-cols-1 lg:grid-cols-12 gap-12">
-           
-           {/* Detaylı Açıklama */}
-           <div className="lg:col-span-8 bg-gradient-to-br from-white/[0.03] to-transparent border border-white/5 p-12 rounded-[3rem]">
-              <h2 className="text-3xl font-black mb-8 text-white uppercase tracking-widest border-b border-white/5 pb-6">
-                Ürün Detayları
-              </h2>
-              <div className="text-xl text-gray-400 leading-loose whitespace-pre-wrap font-light">
-                {product.description || "Bu ürün hakkında detaylı açıklama yakında eklenecektir."}
-              </div>
-           </div>
-
-           {/* 🔹 YENİ TASARIM SİPARİŞ KARTI */}
-           <div className="lg:col-span-4">
-              <div className="relative overflow-hidden p-[2px] rounded-[3rem] bg-gradient-to-br from-cyan-500 via-blue-600 to-purple-600 shadow-[0_0_50px_rgba(59,130,246,0.2)]">
-                <div className="bg-[#0A0E1A] p-10 rounded-[2.9rem] h-full relative z-10">
-                  
-                  <div className="text-center mb-10">
-                    <div className="inline-flex p-4 rounded-3xl bg-blue-500/10 text-blue-400 mb-6 border border-blue-500/20">
-                      <ShoppingCart size={40} />
-                    </div>
-                    <h3 className="text-3xl font-black text-white uppercase tracking-tighter">
-                      ŞİMDİ SİPARİŞ VER
-                    </h3>
-                    <div className="h-1 w-12 bg-blue-500 mx-auto mt-4 rounded-full" />
-                  </div>
-
-                  <div className="space-y-4">
-                    {[product.link1, product.link2, product.link3].filter(Boolean).map((link, index) => {
-                      const { name, colorClass } = getLinkProps(link);
-                      return (
-                        <motion.a 
-                          key={index} 
-                          href={normalizeUrl(link)} 
-                          target="_blank"
-                          whileHover={{ scale: 1.03, x: 5 }}
-                          whileTap={{ scale: 0.97 }}
-                          className="group flex items-center justify-between w-full p-6 rounded-[1.5rem] 
-                                     bg-white/[0.03] border border-white/10 hover:border-blue-500/50 
-                                     transition-all duration-300 relative overflow-hidden"
-                        >
-                          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                          
-                          <div className="flex flex-col relative z-10">
-                            <span className="text-[10px] text-gray-500 font-bold tracking-[0.2em] uppercase mb-1">RESMİ SATIŞ</span>
-                            <span className={`font-black text-xl tracking-tight ${colorClass}`}>{name}</span>
-                          </div>
-                          
-                          <div className="bg-white/5 p-3 rounded-2xl group-hover:bg-blue-600 group-hover:text-white transition-all relative z-10 shadow-xl">
-                            <ExternalLink size={22} />
-                          </div>
-                        </motion.a>
-                      );
-                    })}
-                  </div>
-
-                  <div className="mt-10 pt-8 border-t border-white/5 flex items-center justify-between text-[10px] font-black tracking-widest text-gray-500 uppercase">
-                    <span>HIZLI KARGO</span>
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500/50" />
-                    <span>ORİJİNAL ÜRÜN</span>
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500/50" />
-                    <span>GÜVENLİ</span>
-                  </div>
-                </div>
-              </div>
-           </div>
-
         </div>
       </div>
     </div>
@@ -262,15 +242,19 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 }
 
 /* ==========================================================
-   📌 YARDIMCI BİLEŞENLER
+   YARDIMCI BİLEŞENLER
 ========================================================== */
 
-function SpecBox({ title, value, icon }: { title: string, value: string, icon: any }) {
+function SpecItem({ label, value, icon: Icon }: { label: string, value: string, icon: any }) {
   return (
-    <div className="p-7 rounded-[2rem] bg-white/[0.02] border border-white/5 hover:border-cyan-500/30 hover:bg-white/[0.04] transition-all duration-500 group">
-      <div className="text-cyan-500 mb-4 group-hover:scale-110 transition-transform duration-500">{icon}</div>
-      <div className="text-gray-500 text-[10px] uppercase font-black tracking-[0.2em] mb-1.5">{title}</div>
-      <div className="text-white font-extrabold text-xl tracking-tight">{value || "Belirtilmedi"}</div>
+    <div className="flex items-start gap-4 p-4 rounded-2xl bg-[#0F111A] border border-white/5 hover:border-blue-500/30 transition-colors group">
+      <div className="p-2.5 rounded-xl bg-blue-500/10 text-blue-500 group-hover:text-white group-hover:bg-blue-500 transition-colors">
+         <Icon size={18} />
+      </div>
+      <div>
+         <div className="text-[10px] uppercase font-bold text-gray-500 tracking-wider mb-0.5">{label}</div>
+         <div className="text-sm font-semibold text-gray-200">{value || "Standart"}</div>
+      </div>
     </div>
   );
 }

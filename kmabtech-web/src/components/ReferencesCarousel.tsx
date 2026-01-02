@@ -1,163 +1,128 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import { api } from "@/services/api";
 import { Reference } from "@/lib/types";
-import { useTheme } from "@/components/Theme/ThemeProvider";
+import { motion, useMotionTemplate, useMotionValue } from "framer-motion";
+import { MousePointer2 } from "lucide-react";
 
-export default function ReferencesCarousel() {
-  const { theme } = useTheme();
-  const trackRef = useRef<HTMLDivElement>(null);
-  const animationRef = useRef<number | undefined>(undefined);
-
+export default function ReferencesSpotlight() {
   const [references, setReferences] = useState<Reference[]>([]);
-  const [isPaused, setIsPaused] = useState(false);
 
-  const SPEED = 1.2;
-
-  // 🔥 SADECE api.ts KULLANILIYOR
   useEffect(() => {
-    api
-      .getReferences()
+    api.getReferences()
       .then(setReferences)
       .catch(console.error);
   }, []);
 
-  useEffect(() => {
-    if (!trackRef.current || references.length === 0 || isPaused) return;
-
-    const track = trackRef.current;
-    let x = 0;
-    let lastTime: number | null = null;
-
-    const animate = (timestamp: number) => {
-      if (!lastTime) lastTime = timestamp;
-      const deltaTime = timestamp - lastTime;
-      lastTime = timestamp;
-
-      x -= SPEED * (deltaTime / 16);
-      track.style.transform = `translateX(${x}px)`;
-
-      const first = track.children[0] as HTMLElement;
-      const w = first.offsetWidth + 64;
-
-      if (Math.abs(x) >= w) {
-        track.appendChild(first);
-        x += w;
-      }
-
-      animationRef.current = requestAnimationFrame(animate);
-    };
-
-    animationRef.current = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(animationRef.current!);
-  }, [references, isPaused]);
-
   if (!references || references.length === 0) return null;
 
-  // Akıcı döngü için kopyalar
-  const items = [
-    ...references,
-    ...references,
-    ...references,
-    ...references,
-    ...references,
-    ...references,
-  ];
-
-  /* ========================
-      TEMA'YA GÖRE RENKLER
-  ========================= */
-  const bgStart = theme === "dark" ? "#070b38" : "#f8f9ff";
-  const bgMid   = theme === "dark" ? "#000a1f" : "#eef2ff";
-  const bgEnd   = theme === "dark" ? "#001226" : "#e3eaff";
-
-  const fadeLeft = theme === "dark" ? "#070b38" : "#f8f9ff";
-  const fadeRight = fadeLeft;
-
-  const textColor = theme === "dark" ? "text-gray-300" : "text-gray-700";
-
   return (
-    <section
-      className="py-20 overflow-hidden select-none"
-      style={{
-        background: `linear-gradient(to bottom, ${bgStart}, ${bgMid}, ${bgEnd})`,
-      }}
-    >
-      <h2
-        className={`text-4xl font-bold text-center mb-16 ${
-          theme === "dark" ? "text-white" : "text-gray-900"
-        }`}
-      >
-        Müşterilerimiz ve Referanslarımız
-      </h2>
+    <section className="relative py-32 bg-black overflow-hidden selection:bg-blue-500/30">
+      
+      {/* GLOBAL ARKA PLAN IŞIKLARI */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-gradient-to-b from-blue-900/20 to-transparent opacity-40 blur-[100px]" />
+        <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.03] mix-blend-overlay" /> {/* Noise texture varsa */}
+      </div>
 
-      <div
-        className="relative w-full overflow-hidden"
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
-      >
-        <div
-          ref={trackRef}
-          className="flex items-center gap-16 whitespace-nowrap will-change-transform py-4"
-        >
-          {items.map((ref, i) => (
-            <div
-              key={`${ref.id}-${i}`}
-              className="flex-shrink-0 flex flex-col items-center justify-center transition-all duration-300 hover:scale-110"
-            >
-              <div className="relative group">
-                <Image
-                  src={
-                    ref.logoUrl.startsWith("http")
-                      ? ref.logoUrl
-                      : `${api.baseUrl}${ref.logoUrl}`
-                  }
-                  alt={ref.companyName}
-                  width={160}
-                  height={80}
-                  className="object-contain opacity-80 grayscale group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-300"
-                />
+      <div className="container mx-auto px-4 relative z-10">
+        
+        {/* HEADER */}
+        <div className="text-center mb-24">
+          <motion.div 
+             initial={{ opacity: 0, y: 20 }}
+             whileInView={{ opacity: 1, y: 0 }}
+             viewport={{ once: true }}
+             className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-xs text-gray-400 font-mono mb-6"
+          >
+             <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"/>
+             MÜŞTERİLERİMİZİN DAİMA YANINDAYIZ
+          </motion.div>
+          
+          <h2 className="text-5xl md:text-6xl font-bold text-white tracking-tight mb-6">
+             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Referanslarımız</span>
+          </h2>
+          <p className="text-gray-500 text-lg max-w-2xl mx-auto leading-relaxed">
+            Firmaların dijital dönüşüm yolculuklarında onlara güç veriyoruz.
+          </p>
+        </div>
 
-                {/* Glow Hover */}
-                <div
-                  className="absolute inset-0 rounded-lg blur-sm transition-opacity duration-300"
-                  style={{
-                    background:
-                      theme === "dark"
-                        ? "linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent)"
-                        : "linear-gradient(to right, transparent, rgba(0,0,0,0.08), transparent)",
-                    opacity: 0,
-                  }}
-                />
-              </div>
-
-              <p
-                className={`mt-3 text-sm uppercase tracking-wider font-medium transition-colors duration-300 group-hover:text-blue-400 ${textColor}`}
-              >
-                {ref.companyName}
-              </p>
-            </div>
+        {/* SPOTLIGHT GRID */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+          {references.map((ref) => (
+            <SpotlightCard key={ref.id} reference={ref} />
           ))}
         </div>
 
-        {/* LEFT FADE */}
-        <div
-          className="absolute left-0 top-0 bottom-0 w-32 z-10 pointer-events-none"
-          style={{
-            background: `linear-gradient(to right, ${fadeLeft}, transparent)`,
-          }}
-        />
-
-        {/* RIGHT FADE */}
-        <div
-          className="absolute right-0 top-0 bottom-0 w-32 z-10 pointer-events-none"
-          style={{
-            background: `linear-gradient(to left, ${fadeRight}, transparent)`,
-          }}
-        />
       </div>
     </section>
+  );
+}
+
+/* =========================================
+   SPOTLIGHT CARD COMPONENT (Sihir Burada)
+   ========================================= */
+function SpotlightCard({ reference }: { reference: Reference }) {
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  function handleMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent) {
+    const { left, top } = currentTarget.getBoundingClientRect();
+    mouseX.set(clientX - left);
+    mouseY.set(clientY - top);
+  }
+
+  return (
+    <div
+      className="group relative border border-white/10 bg-gray-900/20 overflow-hidden rounded-3xl"
+      onMouseMove={handleMouseMove}
+    >
+      {/* 1. SPOTLIGHT EFFECT (Mouse'u takip eden ışık) */}
+      <motion.div
+        className="pointer-events-none absolute -inset-px rounded-3xl opacity-0 transition duration-300 group-hover:opacity-100"
+        style={{
+          background: useMotionTemplate`
+            radial-gradient(
+              650px circle at ${mouseX}px ${mouseY}px,
+              rgba(59, 130, 246, 0.15),
+              transparent 80%
+            )
+          `,
+        }}
+      />
+      
+      {/* 2. KART İÇERİĞİ */}
+      <div className="relative h-full min-h-[280px] p-8 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm rounded-3xl transition-all duration-500 hover:bg-black/20">
+        
+        {/* Dekoratif Izgara (Sadece Hover'da görünür) */}
+        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-0 group-hover:opacity-[0.07] transition-opacity duration-500 bg-center" />
+        
+        {/* Logo Container */}
+        <div className="relative z-10 w-full h-32 flex items-center justify-center transition-transform duration-500 group-hover:-translate-y-2">
+           <div className="relative w-48 h-24 filter grayscale contrast-50 opacity-50 transition-all duration-500 group-hover:filter-none group-hover:opacity-100 group-hover:scale-110">
+             <Image
+                src={reference.logoUrl.startsWith("http") ? reference.logoUrl : `${api.baseUrl}${reference.logoUrl}`}
+                alt={reference.companyName}
+                fill
+                className="object-contain drop-shadow-2xl"
+             />
+           </div>
+        </div>
+
+        {/* Metin Bilgisi */}
+        <div className="absolute bottom-8 left-0 right-0 text-center opacity-0 transform translate-y-4 transition-all duration-500 group-hover:opacity-100 group-hover:translate-y-0">
+           <h3 className="text-white font-bold text-lg tracking-wide">{reference.companyName}</h3>
+           <p className="text-blue-500/80 text-xs uppercase font-mono mt-1 tracking-widest">Çözüm Ortağı</p>
+        </div>
+        
+        {/* Köşe Işıltısı */}
+        <div className="absolute top-0 right-0 p-4 opacity-20 group-hover:opacity-100 transition-opacity">
+           <div className="w-2 h-2 bg-blue-500 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.8)]" />
+        </div>
+
+      </div>
+    </div>
   );
 }
