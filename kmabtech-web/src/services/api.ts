@@ -1,30 +1,25 @@
 import axios from "axios";
 
 // ===================================================
-// BASE URL
+// BASE URL (ENV'DEN OKUNUR)
 // ===================================================
-const BASE_URL = "https://api.commitrasoft.com";
-
-
-const API_URL = `${BASE_URL}/api`;
+const BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.commitrasoft.com";
 
 // ===================================================
 // AXIOS INSTANCE
 // ===================================================
 const apiClient = axios.create({
-  baseURL: API_URL,
+  baseURL: `${BASE_URL}/api`,
 });
 
 // ===================================================
-// INTERCEPTOR — TOKEN EKLEME
+// INTERCEPTOR — TOKEN
 // ===================================================
 apiClient.interceptors.request.use(
   (config) => {
     if (typeof window !== "undefined") {
-
-      // 🔥 DÜZELTİLMİŞ SATIR — Artık doğru token key okunuyor
       const token = localStorage.getItem("jwtToken");
-
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -35,11 +30,9 @@ apiClient.interceptors.request.use(
 );
 
 // ===================================================
-// EXPORT EDİLEN API FONKSİYONLARI
+// API EXPORT
 // ===================================================
 export const api = {
-  baseUrl: BASE_URL,
-
   // ====================== CATEGORIES ======================
   getCategories: async () => {
     const res = await apiClient.get("/Categories");
@@ -61,14 +54,18 @@ export const api = {
     return res.data;
   },
 
-getProductById: async (id: number) => {
-  const res = await apiClient.get(`/Products/${id}`);
-  return res.data;
-},
+  getProductById: async (id: number) => {
+    const res = await apiClient.get(`/Products/${id}`);
+    return res.data;
+  },
 
+  createProduct: async (data: any) => {
+    const res = await apiClient.post("/Products", data);
+    return res.data;
+  },
 
-  createProduct: async (productData: any) => {
-    const res = await apiClient.post("/Products", productData);
+  updateProduct: async (id: number, data: any) => {
+    const res = await apiClient.put(`/Products/${id}`, data);
     return res.data;
   },
 
@@ -83,10 +80,6 @@ getProductById: async (id: number) => {
     const res = await apiClient.post("/Upload", fd);
     return res.data.url;
   },
-  updateProduct: async (id: number, data: any) => {
-  const res = await apiClient.put(`/Products/${id}`, data);
-  return res.data;
-},
 
   // ====================== SERVICES ======================
   getServices: async () => {
@@ -94,13 +87,13 @@ getProductById: async (id: number) => {
     return res.data;
   },
 
-  createService: async (serviceData: any) => {
-    const res = await apiClient.post("/Services", serviceData);
+  createService: async (data: any) => {
+    const res = await apiClient.post("/Services", data);
     return res.data;
   },
 
-  updateService: async (id: number, serviceData: any) => {
-    const res = await apiClient.put(`/Services/${id}`, serviceData);
+  updateService: async (id: number, data: any) => {
+    const res = await apiClient.put(`/Services/${id}`, data);
     return res.data;
   },
 
@@ -114,13 +107,13 @@ getProductById: async (id: number) => {
     return res.data;
   },
 
-  createReference: async (formData: FormData) => {
-    const res = await apiClient.post("/References", formData);
+  createReference: async (data: FormData) => {
+    const res = await apiClient.post("/References", data);
     return res.data;
   },
 
-  updateReference: async (id: number, formData: FormData) => {
-    const res = await apiClient.put(`/References/${id}`, formData);
+  updateReference: async (id: number, data: FormData) => {
+    const res = await apiClient.put(`/References/${id}`, data);
     return res.data;
   },
 
@@ -128,7 +121,7 @@ getProductById: async (id: number) => {
     await apiClient.delete(`/References/${id}`);
   },
 
-  // ====================== BLOG POSTS ======================
+  // ====================== BLOG ======================
   getBlogPosts: async () => {
     const res = await apiClient.get("/BlogPosts");
     return res.data;
@@ -139,13 +132,13 @@ getProductById: async (id: number) => {
     return res.data;
   },
 
-  createBlogPost: async (formData: FormData) => {
-    const res = await apiClient.post("/BlogPosts", formData);
+  createBlogPost: async (data: FormData) => {
+    const res = await apiClient.post("/BlogPosts", data);
     return res.data;
   },
 
-  updateBlogPost: async (id: number, formData: FormData) => {
-    const res = await apiClient.put(`/BlogPosts/${id}`, formData);
+  updateBlogPost: async (id: number, data: FormData) => {
+    const res = await apiClient.put(`/BlogPosts/${id}`, data);
     return res.data;
   },
 
@@ -153,19 +146,19 @@ getProductById: async (id: number) => {
     await apiClient.delete(`/BlogPosts/${id}`);
   },
 
-  // ====================== CONTACT MESSAGES ======================
+  // ====================== CONTACT ======================
   getContactMessages: async () => {
     const res = await apiClient.get("/ContactMessages");
     return res.data;
   },
+
   deleteContactMessage: async (id: number) => {
-    const res = await apiClient.delete(`/ContactMessages/${id}`);
+    await apiClient.delete(`/ContactMessages/${id}`);
+  },
+
+  // ====================== DASHBOARD ======================
+  getDashboardStats: async () => {
+    const res = await apiClient.get("/dashboard");
     return res.data;
   },
-getDashboardStats: async () => {
-  const res = await apiClient.get("/dashboard");
-  return res.data;
-},
-
-  
 };
