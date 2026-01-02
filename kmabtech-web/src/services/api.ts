@@ -1,16 +1,16 @@
 import axios from "axios";
 
 // ===================================================
-// BASE URL (ENV'DEN OKUNUR)
+// BASE URL
 // ===================================================
-const BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.commitrasoft.com";
+export const BASE_URL = "https://api.commitrasoft.com";
+const API_URL = `${BASE_URL}/api`;
 
 // ===================================================
 // AXIOS INSTANCE
 // ===================================================
 const apiClient = axios.create({
-  baseURL: `${BASE_URL}/api`,
+  baseURL: API_URL,
 });
 
 // ===================================================
@@ -33,6 +33,24 @@ apiClient.interceptors.request.use(
 // API EXPORT
 // ===================================================
 export const api = {
+  // 🔥 image path birleştirme için
+  baseUrl: BASE_URL,
+
+  // ====================== UPLOAD ======================
+  uploadImage: async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const res = await apiClient.post("/Upload", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    // backend { url: "/uploads/xxx.jpg" } dönüyorsa
+    return res.data.url;
+  },
+
   // ====================== CATEGORIES ======================
   getCategories: async () => {
     const res = await apiClient.get("/Categories");
@@ -73,14 +91,6 @@ export const api = {
     await apiClient.delete(`/Products/${id}`);
   },
 
-  uploadImage: async (file: File) => {
-    const fd = new FormData();
-    fd.append("file", file);
-
-    const res = await apiClient.post("/Upload", fd);
-    return res.data.url;
-  },
-
   // ====================== SERVICES ======================
   getServices: async () => {
     const res = await apiClient.get("/Services");
@@ -107,13 +117,13 @@ export const api = {
     return res.data;
   },
 
-  createReference: async (data: FormData) => {
-    const res = await apiClient.post("/References", data);
+  createReference: async (formData: FormData) => {
+    const res = await apiClient.post("/References", formData);
     return res.data;
   },
 
-  updateReference: async (id: number, data: FormData) => {
-    const res = await apiClient.put(`/References/${id}`, data);
+  updateReference: async (id: number, formData: FormData) => {
+    const res = await apiClient.put(`/References/${id}`, formData);
     return res.data;
   },
 
@@ -121,7 +131,7 @@ export const api = {
     await apiClient.delete(`/References/${id}`);
   },
 
-  // ====================== BLOG ======================
+  // ====================== BLOG POSTS ======================
   getBlogPosts: async () => {
     const res = await apiClient.get("/BlogPosts");
     return res.data;
@@ -132,13 +142,13 @@ export const api = {
     return res.data;
   },
 
-  createBlogPost: async (data: FormData) => {
-    const res = await apiClient.post("/BlogPosts", data);
+  createBlogPost: async (formData: FormData) => {
+    const res = await apiClient.post("/BlogPosts", formData);
     return res.data;
   },
 
-  updateBlogPost: async (id: number, data: FormData) => {
-    const res = await apiClient.put(`/BlogPosts/${id}`, data);
+  updateBlogPost: async (id: number, formData: FormData) => {
+    const res = await apiClient.put(`/BlogPosts/${id}`, formData);
     return res.data;
   },
 
@@ -156,7 +166,7 @@ export const api = {
     await apiClient.delete(`/ContactMessages/${id}`);
   },
 
-  //  ====================== DASHBOARD ======================
+  // ====================== DASHBOARD ======================
   getDashboardStats: async () => {
     const res = await apiClient.get("/dashboard");
     return res.data;
