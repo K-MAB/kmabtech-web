@@ -15,15 +15,16 @@ export default function ProductsPage() {
   const [isFilterOpen, setIsFilterOpen] = useState(true);
 
   useEffect(() => {
-    Promise.all([
-      api.getProducts(),
-      fetch(`${api.baseUrl}/api/Categories`).then(res => res.json())
-    ]).then(([prodData, catData]) => {
-      setProducts(prodData || []);
-      setCategories(catData || []);
-      setLoading(false);
-    });
-  }, []);
+  Promise.all([
+    api.getProducts(),
+    api.getCategories(),
+  ]).then(([prodData, catData]) => {
+    setProducts(prodData || []);
+    setCategories(catData || []);
+    setLoading(false);
+  });
+}, []);
+
 
   const filteredProducts = useMemo(() => {
     return products.filter((p) => {
