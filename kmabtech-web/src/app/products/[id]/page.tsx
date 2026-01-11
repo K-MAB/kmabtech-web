@@ -58,7 +58,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   // Dinamik Link Stilleri
   const getLinkStyle = (link: string) => {
     if (link.includes("shopier")) return { name: "SHOPIER İLE AL", bg: "bg-blue-600", border: "border-blue-500", shadow: "shadow-blue-900/40" };
-    if (link.includes("ty")) return { name: "TRENDYOL'DA GÖR", bg: "bg-orange-600", border: "border-orange-500", shadow: "shadow-orange-900/40" };
+    if (link.includes("ty")||link.includes("trendyol")) return { name: "TRENDYOL'DA GÖR", bg: "bg-orange-600", border: "border-orange-500", shadow: "shadow-orange-900/40" };
     return { name: "SATIN AL", bg: "bg-purple-600", border: "border-purple-500", shadow: "shadow-purple-900/40" };
   };
 
