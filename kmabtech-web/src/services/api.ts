@@ -171,4 +171,11 @@ export const api = {
     const res = await apiClient.get("/dashboard");
     return res.data;
   },
+  login: async (email: string, password: string) => {
+  const res = await apiClient.post("/Auth/login", {
+    email,
+    password,
+  });
+  return res.data; // { token: "..." }
+},
 };

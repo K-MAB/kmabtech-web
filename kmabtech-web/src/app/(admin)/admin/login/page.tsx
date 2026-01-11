@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import http from '@/lib/http';
+import { api } from '@/services/api';
 import { Lock, Mail, ArrowRight, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 
@@ -14,27 +14,33 @@ export default function AdminLoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // 🔥 FORM SUBMIT TAMAMEN KAPALI
+  // ===================================================
+  // LOGIN
+  // ===================================================
   const handleLogin = async () => {
+    if (!email || !password) {
+      setError('E-posta ve şifre zorunludur.');
+      return;
+    }
+
     setError('');
     setLoading(true);
 
     try {
-      const response = await http.post('/Auth/login', {
-        email,
-        password,
-      });
+      const res = await api.login(email, password);
 
-      const { token } = response.data;
+      if (res?.token) {
+        localStorage.setItem('jwtToken', res.token);
 
-      if (token) {
-        localStorage.setItem('jwtToken', token);
-        router.replace('/admin/dashboard'); // 🔥 push yerine replace
+        // 🔥 Admin dashboard
+        router.replace('/admin/dashboard');
+      } else {
+        setError('Giriş başarısız. Lütfen bilgilerinizi kontrol edin.');
       }
     } catch (err: any) {
       console.error(err);
 
-      if (err?.response?.status === 400) {
+      if (err?.response?.status === 400 || err?.response?.status === 401) {
         setError('E-posta veya şifre hatalı!');
       } else {
         setError('Sunucuya bağlanılamadı. Lütfen tekrar deneyin.');
@@ -62,6 +68,7 @@ export default function AdminLoginPage() {
         {/* BODY */}
         <div className="p-8 space-y-6">
 
+          {/* ERROR */}
           {error && (
             <div className="flex items-center p-4 bg-red-500/10 border border-red-500/50 rounded-lg text-red-400 text-sm">
               <AlertCircle size={18} className="mr-2" />
@@ -71,49 +78,73 @@ export default function AdminLoginPage() {
 
           {/* EMAIL */}
           <div>
-            <label className="block text-sm text-gray-400 mb-1">E-Posta</label>
+            <label className="block text-sm text-gray-400 mb-1">
+              E-Posta
+            </label>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
+              <Mail
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"
+                size={20}
+              />
               <input
                 type="email"
+                placeholder="admin@commitrasoft.com"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-gray-900 border border-gray-700 rounded-lg"
+                className="w-full pl-10 pr-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:outline-none focus:border-blue-500"
               />
             </div>
           </div>
 
           {/* PASSWORD */}
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Şifre</label>
+            <label className="block text-sm text-gray-400 mb-1">
+              Şifre
+            </label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
+              <Lock
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"
+                size={20}
+              />
               <input
                 type="password"
+                placeholder="••••••••"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-gray-900 border border-gray-700 rounded-lg"
+                className="w-full pl-10 pr-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:outline-none focus:border-blue-500"
               />
             </div>
           </div>
 
-          {/* 🔥 BUTTON — SUBMIT YOK */}
+          {/* BUTTON */}
           <button
             type="button"
             onClick={handleLogin}
             disabled={loading}
-            className="w-full py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold flex items-center justify-center disabled:opacity-50"
+            className="w-full py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold flex items-center justify-center disabled:opacity-50 transition"
           >
-            {loading ? 'Giriş Yapılıyor...' : <>Panele Gir <ArrowRight className="ml-2" size={18} /></>}
+            {loading ? (
+              'Giriş Yapılıyor...'
+            ) : (
+              <>
+                Panele Gir
+                <ArrowRight className="ml-2" size={18} />
+              </>
+            )}
           </button>
 
+          {/* BACK */}
           <div className="text-center mt-4">
-            <Link href="/" className="text-sm text-gray-400 hover:text-white">
+            <Link
+              href="/"
+              className="text-sm text-gray-400 hover:text-white transition"
+            >
               ← Siteye geri dön
             </Link>
           </div>
+
         </div>
       </div>
     </div>
