@@ -83,8 +83,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body>
         <ThemeProvider>
           <Header />
-          {/* Reserve space for the fixed header so page content doesn't sit underneath it */}
-          <main className="pt-24">{children}</main>
+          {children}
         </ThemeProvider>
       </body>
     </html>

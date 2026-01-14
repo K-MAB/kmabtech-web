@@ -128,7 +128,7 @@ export default function ProductsPage() {
         </motion.button>
 
         {/* Header Area */}
-        <div className="sticky top-0 z-30 bg-[#050505]/80 backdrop-blur-lg border-b border-white/5 px-8 py-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div className="sticky top-24 z-30 bg-[#050505]/80 backdrop-blur-lg border-b border-transparent px-8 py-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
            <div>
               <h1 className="text-4xl md:text-5xl font-black tracking-tight text-white mb-2">
                 Commitra <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500">3D</span>
