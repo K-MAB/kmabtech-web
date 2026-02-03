@@ -49,12 +49,12 @@ export function Header() {
         >
           {/* LOGO */}
           <Link href="/" className="flex items-center gap-2 group">
-             <div className="relative">
+             <div className="">
                 <div className="absolute -inset-2 bg-blue-500/20 rounded-full blur-lg opacity-0 group-hover:opacity-100 transition duration-500" />
                 <img
                   src="/logo.png"
                   alt="Commitra Logo"
-                  className="h-10 w-auto relative z-10 transition-transform group-hover:scale-105"
+                  className="h-20 w-auto relative z-10 transition-transform group-hover:scale-105"
                 />
              </div>
              <span className={`font-bold text-xl tracking-tight hidden sm:block ${isScrolled ? "text-white" : "text-white"}`}>
