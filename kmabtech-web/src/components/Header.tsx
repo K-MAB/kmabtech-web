@@ -12,6 +12,7 @@ export function Header() {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const isProducts = pathname && pathname.startsWith("/products");
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -34,16 +35,18 @@ export function Header() {
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
         className={`fixed top-0 left-0 right-0 z-50 flex justify-center transition-all duration-300 ${
-          isScrolled ? "py-4" : "py-6"
-        }`}
+          isProducts ? "py-6 bg-[#050505]/80 border-b border-white/5 backdrop-blur-xl" : isScrolled ? "py-4" : "py-6"
+        }`} 
       >
         <div
           className={`
-            relative flex items-center justify-between px-6 py-3 rounded-full transition-all duration-300
+            relative flex items-center justify-between px-6 py-3 transition-all duration-300
             ${
-              isScrolled
-                ? "w-[90%] md:w-[60%] bg-[#050616]/80 backdrop-blur-xl border border-white/10 shadow-[0_0_30px_-10px_rgba(0,0,0,0.5)]"
-                : "w-full max-w-7xl bg-transparent border-transparent"
+              isProducts
+                ? "w-full max-w-7xl mx-auto bg-transparent rounded-none"
+                : isScrolled
+                  ? "w-[90%] md:w-[60%] bg-[#050616]/80 backdrop-blur-xl border border-white/10 shadow-[0_0_30px_-10px_rgba(0,0,0,0.5)] rounded-none"
+                  : "w-full max-w-7xl bg-transparent border-transparent rounded-full" 
             }
           `}
         >
